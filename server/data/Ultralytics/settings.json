@@ -1,0 +1,19 @@
+{
+  "settings_version": "0.0.8",
+  "datasets_dir": "D:\\LABIL\\BIMBEL\\IKHSAN\\SMART_LAMP\\datasets",
+  "weights_dir": "weights",
+  "runs_dir": "runs",
+  "uuid": "a9b31dd10ba6e1737c5df1aac61a2ec710176a3f0987ad7e3fc1907f93f0bab6",
+  "sync": true,
+  "api_key": "",
+  "openai_api_key": "",
+  "clearml": true,
+  "comet": true,
+  "dvc": true,
+  "mlflow": true,
+  "raytune": true,
+  "tensorboard": false,
+  "wandb": false,
+  "vscode_msg": true,
+  "openvino_msg": true
+}

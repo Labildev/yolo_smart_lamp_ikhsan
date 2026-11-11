@@ -1,0 +1,43 @@
+# Python Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual Environments (Paling penting: jangan sampai folder venv terupload ke GitHub!)
+venv/
+server/venv/
+.venv/
+env/
+ENV/
+
+# PyInstaller / Distribution
+build/
+dist/
+*.egg-info/
+
+# Unit Tests & Cache
+.pytest_cache/
+.coverage
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Temporary Files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# YOLO Training Artifacts
+runs/
+runs_lampu_pintar/
+*.engine
+*.onnx
+
+# Upload foto pengujian opsional (bila tidak ingin memenuhi repositori)
+# Uncomment jika ingin mengabaikan foto uploads:
+# server/uploads/*.jpg
+

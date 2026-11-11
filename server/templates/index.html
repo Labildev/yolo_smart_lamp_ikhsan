@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Pengujian Lampu Pintar YOLOv8 | Ikhsan Wahyudi - Universitas Almuslim</title>
+  
+  <!-- Font Standar Humanis & Bersih: Inter & Roboto Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons 1.11 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* =========================================================================
+       DESAIN OTENTIK ADMIN & LAB PENELITIAN (BUKAN TAMPILAN AI / SCI-FI)
+       Bersih, tegas, terstruktur, berbasis standar dashboard software engineering.
+       ========================================================================= */
+    :root {
+      --sidebar-width: 260px;
+      --sidebar-bg: #1e293b;
+      --sidebar-hover: #334155;
+      --sidebar-active: #0284c7;
+      --sidebar-text: #94a3b8;
+      --sidebar-text-active: #ffffff;
+      
+      --body-bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --border-color: #cbd5e1;
+      --border-light: #e2e8f0;
+      
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-secondary: #475569;
+      
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #d97706;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--body-bg);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 0.88rem;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    .font-mono {
+      font-family: 'Roboto Mono', Menlo, Consolas, monospace;
+    }
+
+    /* =========================================================================
+       SIDEBAR ADMIN (KLASIK, PROFESIONAL & TEGAS)
+       ========================================================================= */
+    .app-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-width);
+      background-color: var(--sidebar-bg);
+      z-index: 1045;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid rgba(0, 0, 0, 0.15);
+      transition: transform 0.25s ease;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sidebar-header h1 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    .sidebar-header .sub-brand {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .researcher-box {
+      padding: 14px 18px;
+      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.8rem;
+    }
+
+    .researcher-box .name {
+      font-weight: 600;
+      color: #f8fafc;
+    }
+
+    .researcher-box .meta {
+      font-size: 0.74rem;
+      color: #94a3b8;
+    }
+
+    .sidebar-nav {
+      padding: 14px 10px;
+      flex-grow: 1;
+    }
+
+    .sidebar-nav .nav-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+      padding: 8px 12px 4px;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      color: var(--sidebar-text);
+      font-size: 0.84rem;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 6px;
+      margin-bottom: 2px;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .sidebar-nav a:hover {
+      background: var(--sidebar-hover);
+      color: #ffffff;
+    }
+
+    .sidebar-nav a.active {
+      background: var(--sidebar-active);
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .sidebar-nav a i {
+      font-size: 1rem;
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-specs {
+      padding: 12px 14px;
+      margin: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      font-size: 0.74rem;
+      color: #cbd5e1;
+    }
+
+    .sidebar-specs dt {
+      color: #94a3b8;
+      font-weight: normal;
+    }
+    .sidebar-specs dd {
+      margin-bottom: 4px;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+
+    .sidebar-footer {
+      padding: 12px 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.72rem;
+      color: #64748b;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    /* Mobile Drawer Backdrop */
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1040;
+    }
+
+    /* =========================================================================
+       MAIN CONTENT WRAPPER
+       ========================================================================= */
+    .main-wrapper {
+      margin-left: var(--sidebar-width);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navbar */
+    .top-navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-light);
+      padding: 10px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 1020;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    .status-dot.online {
+      background: #16a34a;
+    }
+
+    /* Section anchor */
+    .content-section {
+      scroll-margin-top: 75px;
+      margin-bottom: 24px;
+    }
+
+    /* Clean Enterprise Cards */
+    .admin-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      margin-bottom: 20px;
+    }
+
+    .admin-card-header {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-light);
+      background: #ffffff;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-card-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 0;
+    }
+
+    .admin-card-body {
+      padding: 18px;
+    }
+
+    /* KPI Cards */
+    .kpi-card {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      height: 100%;
+    }
+
+    .kpi-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+      margin-bottom: 6px;
+    }
+
+    .kpi-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text-main);
+    }
+
+    .kpi-subtext {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* State Lampu Card */
+    .kpi-lamp-on {
+      border-left: 4px solid var(--success);
+      background: #f0fdf4;
+    }
+    .kpi-lamp-off {
+      border-left: 4px solid #94a3b8;
+    }
+
+    /* Clean Image Viewport (Bukan sci-fi HUD) */
+    .camera-frame {
+      background: #0f172a;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      position: relative;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .camera-frame img, .camera-frame video {
+      width: 100%;
+      height: auto;
+      max-height: 480px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .camera-overlay-bar {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .camera-tag {
+      background: rgba(15, 23, 42, 0.8);
+      color: #ffffff;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-family: 'Roboto Mono', monospace;
+    }
+
+    /* Tombol Uji Skenario */
+    .btn-scenario {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border-light);
+      background: #f8fafc;
+      color: var(--text-main);
+      border-radius: 6px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      text-align: left;
+      margin-bottom: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-scenario:hover {
+      background: #e2e8f0;
+      border-color: #cbd5e1;
+    }
+
+    /* Tabel Data Standar Akademik */
+    .table-academic {
+      font-size: 0.82rem;
+      margin: 0;
+    }
+
+    .table-academic th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 600;
+      border-bottom: 2px solid var(--border-light);
+      padding: 10px 14px;
+    }
+
+    .table-academic td {
+      padding: 10px 14px;
+      vertical-align: middle;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .table-academic tbody tr:hover {
+      background: #f8fafc;
+    }
+
+    /* Galeri Jepretan */
+    .gallery-item {
+      border: 1px solid var(--border-light);
+      border-radius: 6px;
+      background: #ffffff;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .gallery-item:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .gallery-item-img {
+      height: 140px;
+      background: #0f172a;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .gallery-item-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gallery-item-info {
+      padding: 10px;
+      font-size: 0.78rem;
+    }
+
+    /* Filter Pills */
+    .filter-btn {
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border-light);
+      background: #ffffff;
+      color: #64748b;
+    }
+    .filter-btn:hover {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+    .filter-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    /* Responsive */
+    @media (max-width: 991.98px) {
+      .app-sidebar {
+        transform: translateX(-100%);
+      }
+      .app-sidebar.show {
+        transform: translateX(0);
+      }
+      .sidebar-backdrop.show {
+        display: block;
+      }
+      .main-wrapper {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Backdrop Mobile -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+
+  <!-- =========================================================================
+       SIDEBAR ADMIN (KLASIK & PROFESIONAL)
+       ========================================================================= -->
+  <aside class="app-sidebar" id="appSidebar">
+    
+    <!-- Header Sidebar -->
+    <div class="sidebar-header">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-cpu-fill text-info fs-5"></i>
+        <div>
+          <h1>Smart Lamp Control</h1>
+          <span class="sub-brand">YOLOv8 + ESP32-S3 N16R8</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Identitas Peneliti Skripsi -->
+    <div class="researcher-box">
+      <div class="name">Ikhsan Wahyudi</div>
+      <div class="meta font-mono">NPM: 235520110043</div>
+      <div class="meta text-muted mt-1">S1 Informatika &bull; Univ. Almuslim</div>
+    </div>
+
+    <!-- Menu Navigasi -->
+    <nav class="sidebar-nav">
+      <div class="nav-label">Menu Utama</div>
+      
+      <a href="#section-ringkasan" class="active" onclick="handleNavClick(this)">
+        <i class="bi bi-speedometer2"></i>
+        <span>Ringkasan Sistem</span>
+      </a>
+
+      <a href="#section-kamera" onclick="handleNavClick(this)">
+        <i class="bi bi-camera-video"></i>
+        <span>Kamera &amp; Deteksi</span>
+      </a>
+
+      <a href="#section-pengujian" onclick="handleNavClick(this)">
+        <i class="bi bi-play-circle"></i>
+        <span>Skenario Pengujian</span>
+      </a>
+
+      <a href="#section-grafik" onclick="handleNavClick(this)">
+        <i class="bi bi-graph-up"></i>
+        <span>Grafik &amp; Analisis</span>
+      </a>
+
+      <a href="#section-galeri" onclick="handleNavClick(this)">
+        <i class="bi bi-images"></i>
+        <span>Galeri Hasil Foto</span>
+        <span class="badge bg-secondary ms-auto font-mono" id="sidebar-gallery-badge" style="font-size: 0.7rem;">0</span>
+      </a>
+
+      <a href="#section-tabel" onclick="handleNavClick(this)">
+        <i class="bi bi-table"></i>
+        <span>Data Log Pengujian</span>
+      </a>
+
+      <!-- Spesifikasi Alat Laboratorium -->
+      <div class="nav-label mt-3">Spesifikasi Perangkat</div>
+      <div class="sidebar-specs">
+        <dl class="mb-0">
+          <dt>Board Mikrokontroler:</dt>
+          <dd class="font-mono text-white">ESP32-S3 N16R8 (OV2640)</dd>
+
+          <dt>Memori Eksternal:</dt>
+          <dd class="font-mono text-info">16MB Flash + 8MB OPI PSRAM</dd>
+          
+          <dt>Sensor Gerak:</dt>
+          <dd class="font-mono">PIR Motion (GPIO 13)</dd>
+          
+          <dt>Modul Relay:</dt>
+          <dd class="font-mono">5V Active-Low (GPIO 14)</dd>
+          
+          <dt>Lampu Beban:</dt>
+          <dd class="font-mono">LED 12V 5W (Dual-Role)</dd>
+          
+          <dt>Model AI:</dt>
+          <dd class="font-mono">YOLOv8 Nano (Lokal)</dd>
+        </dl>
+      </div>
+    </nav>
+
+    <!-- Footer Sidebar -->
+    <div class="sidebar-footer d-flex justify-content-between align-items-center">
+      <span>Skripsi Informatika 2026</span>
+      <a href="/api/export-csv" class="btn btn-outline-light btn-sm font-mono py-0 px-2" style="font-size: 0.72rem;">CSV</a>
+    </div>
+
+  </aside>
+
+  <!-- =========================================================================
+       MAIN WRAPPER
+       ========================================================================= -->
+  <div class="main-wrapper">
+
+    <!-- Top Navbar Sederhana -->
+    <header class="top-navbar d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-sm btn-outline-secondary d-lg-none" onclick="toggleSidebar()" aria-label="Buka Menu">
+          <i class="bi bi-list"></i>
+        </button>
+        <div>
+          <span class="fw-bold text-dark" style="font-size: 0.95rem;">Panel Uji Laboratorium Lampu Pintar</span>
+          <span class="text-muted d-none d-md-inline" style="font-size: 0.8rem;"> &mdash; Universitas Almuslim</span>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-3">
+        <!-- Jam Digital -->
+        <span class="text-secondary font-mono d-none d-sm-inline" id="digital-clock" style="font-size: 0.8rem;">--:--:-- WIB</span>
+
+        <!-- Badge Model -->
+        <span class="badge bg-light text-dark border font-mono fw-normal" id="model-badge">YOLOv8n</span>
+
+        <!-- Status Server -->
+        <span class="d-flex align-items-center text-secondary font-mono" style="font-size: 0.8rem;">
+          <span class="status-dot online"></span> Server Online
+        </span>
+
+        <!-- Tombol Unduh CSV -->
+        <a href="/api/export-csv" class="btn btn-outline-success btn-sm font-mono d-flex align-items-center gap-1" style="font-size: 0.8rem;">
+          <i class="bi bi-download"></i> Ekspor CSV
+        </a>
+      </div>
+    </header>
+
+    <!-- Area Konten Utama -->
+    <main class="container-fluid px-4 py-4 flex-grow-1">
+
+      <!-- =====================================================================
+           SECTION 1: RINGKASAN STATUS SISTEM (KPI CARDS)
+           ===================================================================== -->
+      <section id="section-ringkasan" class="content-section">
+        <div class="row g-3">
+          
+          <!-- Card 1: Status Relay Lampu -->
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kpi-card kpi-lamp-off" id="lamp-card">
+              <div class="kpi-title">Status Relay Lampu Utama</div>
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="kpi-value font-mono" id="lamp-status-text">PADAM (OFF)</div>
+                <div id="lamp-icon-box" class="fs-4 text-muted">
+                  <i class="bi bi-lightbulb-off"></i>
+                </div>
+              </div>
+              <div class="kpi-subtext" id="lamp-subtext">Menunggu pemicuan sensor PIR (GPIO 13) &bull; Relay: GPIO 14</div>
+            </div>
+          </div>
+
+          <!-- Card 2: Kategori & Objek -->
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kpi-card">
+              <div class="kpi-title">Kategori Terverifikasi</div>
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="kpi-value text-primary font-mono" id="category-text">-</div>
+                <span class="badge bg-secondary font-mono" id="priority-badge">Siaga</span>
+              </div>
+              <div class="kpi-subtext text-truncate" id="classes-list">Objek: Belum ada</div>
+            </div>
+          </div>
+
+          <!-- Card 3: Keyakinan AI (Confidence) -->
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kpi-card">
+              <div class="kpi-title">Keyakinan AI (Confidence)</div>
+              <div class="kpi-value font-mono text-dark" id="confidence-text">0.0%</div>
+              <div class="progress mt-2" style="height: 6px;">
+                <div class="progress-bar bg-primary" id="confidence-progress" role="progressbar" style="width: 0%;"></div>
+              </div>
+              <div class="kpi-subtext">Ambang batas aktivasi: &ge; 50%</div>
+            </div>
+          </div>
+
+          <!-- Card 4: Waktu Inferensi AI -->
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kpi-card">
+              <div class="kpi-title">Waktu Inferensi (NFR-01)</div>
+              <div class="kpi-value text-success font-mono" id="latency-text">0.0 ms</div>
+              <div class="kpi-subtext">Standar toleransi: &le; 2.500 ms</div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           SECTION 2: KAMERA & MONITORING DETEKSI
+           ===================================================================== -->
+      <section id="section-kamera" class="content-section">
+        <div class="row g-4">
+          
+          <!-- Sisi Kiri: Layar Pratinjau Kamera -->
+          <div class="col-12 col-lg-8">
+            <div class="admin-card h-100">
+              <div class="admin-card-header">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="admin-card-title">Pratinjau Citra Kamera</span>
+                  <div class="btn-group btn-group-sm ms-2" role="group">
+                    <button type="button" class="btn btn-outline-secondary btn-sm active font-mono" id="mode-btn-esp32" onclick="switchViewMode('esp32')">
+                      ESP32-S3 CAM
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm font-mono" id="mode-btn-webcam" onclick="switchViewMode('webcam')">
+                      Webcam Laptop
+                    </button>
+                  </div>
+                  <span class="badge bg-danger ms-2 d-none font-mono" id="webcam-live-indicator">LIVE</span>
+                </div>
+
+                <span class="text-muted font-mono" style="font-size: 0.78rem;" id="last-update-time">Waktu: -</span>
+              </div>
+
+              <div class="admin-card-body">
+                <!-- Frame Kamera -->
+                <div class="camera-frame" id="viewport-box">
+                  <div class="camera-overlay-bar">
+                    <span class="camera-tag" id="hud-top-chip">ESP32-S3 (OV2640 VGA) &bull; Flash 500ms</span>
+                    <span class="camera-tag" id="file-name-badge">Menunggu sinyal...</span>
+                  </div>
+
+                  <!-- Flash Simulation -->
+                  <div id="flash-effect-overlay" style="display: none; position: absolute; inset: 0; background: #ffffff; opacity: 0; z-index: 40; pointer-events: none; transition: opacity 0.15s ease;"></div>
+
+                  <!-- Gambar Deteksi ESP32 -->
+                  <img id="latest-image" src="/static/latest_detection.jpg" alt="Preview Kamera" onerror="handleImageError(this)">
+
+                  <!-- Stream Webcam Laptop via OpenCV Backend -->
+                  <img id="webcam-stream-img" src="" alt="Webcam Stream" style="display: none; width: 100%; height: auto; max-height: 480px; object-fit: contain; transform: scaleX(-1);">
+
+                  <!-- Fallback Video Element -->
+                  <video id="webcam-video" autoplay playsinline muted style="display: none; width: 100%; height: auto; max-height: 480px; object-fit: contain; transform: scaleX(-1);"></video>
+                  <canvas id="webcam-canvas" style="display: none;"></canvas>
+                </div>
+
+                <!-- Kontrol Sisi Bawah Kamera ESP32 -->
+                <div id="esp32-controls-bar" class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top text-muted" style="font-size: 0.8rem;">
+                  <span>Format: <strong>Raw JPEG Binary (HTTP POST)</strong> | Resolusi: <strong>640&times;480</strong></span>
+                  <button class="btn btn-light btn-sm border font-mono" onclick="refreshImageManual()">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Segarkan Gambar
+                  </button>
+                </div>
+
+                <!-- Kontrol Sisi Bawah Kamera Laptop -->
+                <div id="webcam-controls-bar" class="d-none justify-content-between align-items-center mt-3 pt-2 border-top gap-2">
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-primary btn-sm font-mono" id="btn-snap-webcam" onclick="captureWebcamSnapshot(true)">
+                      <i class="bi bi-camera me-1"></i> Jepret &amp; Analisis (Flash 500ms)
+                    </button>
+                    <button class="btn btn-outline-warning btn-sm font-mono text-dark" id="btn-auto-pir" onclick="toggleAutoPir()">
+                      <i class="bi bi-broadcast me-1"></i> <span id="auto-pir-btn-label">Auto-PIR (Tiap 3 Detik)</span>
+                    </button>
+                    <button class="btn btn-light btn-sm border font-mono" id="btn-view-result" onclick="showLatestResultView()">
+                      Lihat Hasil Deteksi
+                    </button>
+                  </div>
+                  <button class="btn btn-outline-danger btn-sm font-mono" onclick="stopWebcamStream()">
+                    Matikan Kamera
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Sisi Kanan: Kontrol Skenario & Upload (SECTION 3) -->
+          <div class="col-12 col-lg-4" id="section-pengujian">
+            <div class="admin-card h-100 d-flex flex-column">
+              <div class="admin-card-header">
+                <span class="admin-card-title">Panel Skenario Pengujian</span>
+                <span class="badge bg-primary font-mono" style="font-size: 0.7rem;">Bab V</span>
+              </div>
+
+              <div class="admin-card-body d-flex flex-column gap-3">
+                
+                <!-- Uji Coba Skenario Cepat -->
+                <div>
+                  <div class="text-secondary fw-semibold mb-2" style="font-size: 0.78rem;">PENGUJIAN CEPAT (SKENARIO SIDANG)</div>
+                  
+                  <button class="btn-scenario" onclick="runSampleTest('uji_manusia.jpg', this)">
+                    <div>
+                      <span class="badge bg-secondary font-mono me-2">SK-02</span>
+                      <span>Objek Manusia</span>
+                    </div>
+                    <span class="badge bg-success font-mono">Lampu ON</span>
+                  </button>
+
+                  <button class="btn-scenario" onclick="runSampleTest('uji_manusia_bus.jpg', this)">
+                    <div>
+                      <span class="badge bg-secondary font-mono me-2">SK-03</span>
+                      <span>Objek Kendaraan</span>
+                    </div>
+                    <span class="badge bg-success font-mono">Lampu ON</span>
+                  </button>
+
+                  <button class="btn-scenario" onclick="runSampleTest('uji_kucing.jpg', this)">
+                    <div>
+                      <span class="badge bg-secondary font-mono me-2">SK-04</span>
+                      <span>Objek Hewan (Kucing)</span>
+                    </div>
+                    <span class="badge bg-secondary font-mono">Lampu OFF</span>
+                  </button>
+                </div>
+
+                <!-- Form Upload Citra Mandiri -->
+                <div class="pt-3 border-top">
+                  <div class="text-secondary fw-semibold mb-2" style="font-size: 0.78rem;">UJI CITRA MANDIRI (UPLOAD FILE)</div>
+                  <form id="upload-form" enctype="multipart/form-data">
+                    <div class="input-group input-group-sm mb-1">
+                      <input type="file" class="form-control" id="test-file-input" accept="image/*">
+                      <button class="btn btn-primary" type="submit" id="btn-upload">Deteksi</button>
+                    </div>
+                  </form>
+                  <small class="text-muted" style="font-size: 0.75rem;">Mendukung format JPG/PNG foto langsung dari kamera.</small>
+                </div>
+
+                <!-- Aturan Keputusan Relay -->
+                <div class="pt-3 border-top mt-auto">
+                  <div class="text-secondary fw-semibold mb-2" style="font-size: 0.78rem;">LOGIKA KEPUTUSAN RELAY (PRD 2.2)</div>
+                  <table class="table table-sm table-bordered text-center mb-0" style="font-size: 0.75rem;">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Kelas Terdeteksi</th>
+                        <th>Aksi Relay</th>
+                        <th>Keterangan</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="text-start">Manusia, Mobil, Motor</td>
+                        <td><span class="badge bg-success font-mono">ON</span></td>
+                        <td class="text-start">10 dtk + Extend</td>
+                      </tr>
+                      <tr>
+                        <td class="text-start">Kucing, Lembu, Kambing</td>
+                        <td><span class="badge bg-secondary font-mono">OFF</span></td>
+                        <td class="text-start">Lampu tetap padam</td>
+                      </tr>
+                      <tr>
+                        <td class="text-start">Timeout &gt; 5000 ms</td>
+                        <td><span class="badge bg-danger font-mono">OFF</span></td>
+                        <td class="text-start">Fail-safe system</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           SECTION 4: GRAFIK & ANALISIS PERFORMA INFERENSI
+           ===================================================================== -->
+      <section id="section-grafik" class="content-section">
+        <div class="row g-4">
+          
+          <!-- Grafik Tren Latensi -->
+          <div class="col-12 col-lg-8">
+            <div class="admin-card p-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="admin-card-title">Grafik Waktu Inferensi AI (Pengujian NFR-01)</span>
+                <span class="badge bg-light text-secondary border font-mono" style="font-size: 0.75rem;">Batas NFR-01: &le; 2.500 ms</span>
+              </div>
+              <div style="height: 220px; position: relative;">
+                <canvas id="latencyChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Donut Distribusi Objek -->
+          <div class="col-12 col-lg-4">
+            <div class="admin-card p-3 h-100 d-flex flex-column">
+              <div class="mb-2">
+                <span class="admin-card-title">Distribusi Kategori Objek</span>
+              </div>
+              <div class="flex-grow-1 d-flex align-items-center justify-content-center" style="max-height: 220px; position: relative;">
+                <canvas id="distributionChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           SECTION 5: GALERI HASIL JEPRETAN & FORENSIK FOTO
+           ===================================================================== -->
+      <section id="section-galeri" class="content-section">
+        <div class="admin-card">
+          <div class="admin-card-header flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+              <span class="admin-card-title">Galeri Riwayat Jepretan Foto</span>
+              <span class="badge bg-secondary font-mono" id="gallery-count-badge">0 Foto</span>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="d-flex flex-wrap gap-1" id="gallery-filter-chips">
+              <button class="filter-btn active" onclick="filterGallery('all', this)">Semua</button>
+              <button class="filter-btn" onclick="filterGallery('ON', this)">Lampu ON</button>
+              <button class="filter-btn" onclick="filterGallery('OFF', this)">Lampu OFF</button>
+              <button class="filter-btn" onclick="filterGallery('manusia', this)">Manusia</button>
+              <button class="filter-btn" onclick="filterGallery('kendaraan', this)">Kendaraan</button>
+              <button class="filter-btn" onclick="filterGallery('hewan', this)">Hewan</button>
+            </div>
+          </div>
+
+          <div class="admin-card-body">
+            <div class="row g-3" id="gallery-grid">
+              <div class="col-12 text-center text-muted py-4 font-mono">
+                Memuat riwayat foto...
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           SECTION 6: TABEL DATA LOG PENGUJIAN (BAB V SKRIPSI)
+           ===================================================================== -->
+      <section id="section-tabel" class="content-section">
+        <div class="admin-card">
+          <div class="admin-card-header flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+              <span class="admin-card-title">Tabel Rekapitulasi Data Pengujian (Bab V Skripsi)</span>
+              <span class="badge bg-secondary font-mono" id="total-badge">0 Data</span>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-danger btn-sm font-mono" onclick="clearLogs()">
+                <i class="bi bi-trash3 me-1"></i> Reset Log Data
+              </button>
+              <a href="/api/export-csv" class="btn btn-success btn-sm font-mono">
+                <i class="bi bi-file-earmark-spreadsheet me-1"></i> Ekspor CSV
+              </a>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-academic align-middle">
+              <thead>
+                <tr>
+                  <th style="width: 50px;" class="text-center font-mono">No</th>
+                  <th style="width: 160px;">Waktu Uji</th>
+                  <th>Nama File Citra</th>
+                  <th>Objek Terdeteksi</th>
+                  <th>Kategori</th>
+                  <th class="text-center">Confidence</th>
+                  <th class="text-center">Waktu Inferensi</th>
+                  <th class="text-center">Status Relay</th>
+                </tr>
+              </thead>
+              <tbody id="logs-table-body">
+                <tr>
+                  <td colspan="8" class="text-center text-muted py-4 font-mono">
+                    Memuat data log pengujian...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer Standar Akademik -->
+    <footer class="py-3 px-4 bg-white border-top text-center text-muted small">
+      Sistem Kendali Lampu Pintar Deep Learning YOLOv8 &bull; &copy; 2026 Ikhsan Wahyudi (235520110043) &bull; Program Studi S1 Informatika, Universitas Almuslim
+    </footer>
+
+  </div>
+
+  <!-- =========================================================================
+       MODAL ANALISIS DETAIL FOTO (FORENSIC INSPECTOR)
+       ========================================================================= -->
+  <div class="modal fade" id="photoAnalysisModal" tabindex="-1" aria-labelledby="photoAnalysisModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fs-6 fw-bold text-dark font-mono" id="photoAnalysisModalLabel">
+            Detail Analisis Citra &amp; Logika Keputusan Relay
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="row g-3">
+            <!-- Gambar Hasil Deteksi -->
+            <div class="col-12 col-md-7">
+              <div class="border rounded bg-dark p-1 text-center" style="min-height: 280px;">
+                <img id="modal-img-preview" src="" alt="Pratinjau Foto" style="max-width: 100%; max-height: 380px; object-fit: contain;">
+              </div>
+              <div class="d-flex justify-content-between text-muted small font-mono mt-1">
+                <span id="modal-img-resolution">Resolusi: 640&times;480 (VGA)</span>
+                <span id="modal-img-filename" class="text-truncate" style="max-width: 180px;"></span>
+              </div>
+            </div>
+
+            <!-- Data Parameter Teknis -->
+            <div class="col-12 col-md-5">
+              <div class="border rounded p-2.5 mb-2" id="modal-relay-box">
+                <div class="text-muted small fw-semibold">Keputusan Relay Lampu</div>
+                <div class="d-flex justify-content-between align-items-center mt-1">
+                  <span class="fs-6 fw-bold font-mono" id="modal-relay-status">ON</span>
+                  <span class="badge bg-secondary font-mono" id="modal-relay-pin">GPIO 14</span>
+                </div>
+                <div class="text-secondary small mt-1 font-mono" id="modal-relay-behavior" style="font-size: 0.75rem;"></div>
+              </div>
+
+              <table class="table table-sm table-bordered mb-2" style="font-size: 0.8rem;">
+                <tbody>
+                  <tr>
+                    <td class="text-muted" style="width: 40%;">Kategori</td>
+                    <td><span class="badge bg-secondary font-mono" id="modal-cat-badge">-</span></td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted">Kelas Objek</td>
+                    <td class="font-mono fw-semibold" id="modal-classes">-</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted">Confidence AI</td>
+                    <td class="font-mono" id="modal-confidence">-</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted">Waktu Inferensi</td>
+                    <td class="font-mono" id="modal-latency">-</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted">Skenario Skripsi</td>
+                    <td class="font-mono fw-semibold text-primary" id="modal-scenario-code">-</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted">Sumber Pemicu</td>
+                    <td class="font-mono text-muted" id="modal-notes">-</td>
+                  </tr>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer d-flex justify-content-between">
+          <span class="text-muted font-mono small" id="modal-timestamp"></span>
+          <div>
+            <a href="#" id="modal-download-btn" download class="btn btn-outline-primary btn-sm font-mono">
+              <i class="bi bi-download me-1"></i> Unduh Foto
+            </a>
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Script Logika Dashboard & Komunikasi Backend -->
+  <script>
+    let lastTotalCount = -1;
+    let latencyChartInstance = null;
+    let distributionChartInstance = null;
+
+    // Mobile Sidebar Toggle
+    function toggleSidebar() {
+      const sidebar = document.getElementById('appSidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      sidebar.classList.toggle('show');
+      backdrop.classList.toggle('show');
+    }
+
+    function handleNavClick(element) {
+      document.querySelectorAll('.sidebar-nav a').forEach(link => link.classList.remove('active'));
+      element.classList.add('active');
+      if (window.innerWidth < 992) {
+        toggleSidebar();
+      }
+    }
+
+    // Jam Digital Sederhana
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('id-ID', { hour12: false }) + ' WIB';
+      const el = document.getElementById('digital-clock');
+      if (el) el.innerText = timeStr;
+    }
+
+    // Placeholder Gambar Jika Kosong
+    function handleImageError(img) {
+      img.src = 'data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480"><rect fill="%230f172a" width="640" height="480"/><circle cx="320" cy="220" r="40" fill="%231e293b"/><text fill="%2394a3b8" font-family="sans-serif" font-size="14" font-weight="600" x="50%" y="290" text-anchor="middle">SISTEM SIAGA (IDLE)</text><text fill="%2364748b" font-family="sans-serif" font-size="12" x="50%" y="315" text-anchor="middle">Menunggu Sinyal Sensor PIR HC-SR505...</text></svg>';
+    }
+
+    function refreshImageManual() {
+      const img = document.getElementById('latest-image');
+      img.src = `/static/latest_detection.jpg?t=${new Date().getTime()}`;
+    }
+
+    // =========================================================================
+    // FITUR KAMERA LAPTOP (OPENCV BACKEND STREAMER + WEBRTC FALLBACK)
+    // =========================================================================
+    let webcamStream = null;
+    let autoPirInterval = null;
+    let currentViewMode = 'esp32';
+    let activeWebcamEngine = 'none';
+
+    async function switchViewMode(mode) {
+      currentViewMode = mode;
+      const btnEsp32 = document.getElementById('mode-btn-esp32');
+      const btnWebcam = document.getElementById('mode-btn-webcam');
+      const latestImg = document.getElementById('latest-image');
+      const webcamImg = document.getElementById('webcam-stream-img');
+      const webcamVid = document.getElementById('webcam-video');
+      const esp32Controls = document.getElementById('esp32-controls-bar');
+      const webcamControls = document.getElementById('webcam-controls-bar');
+      const liveBadge = document.getElementById('webcam-live-indicator');
+      const hudTopChip = document.getElementById('hud-top-chip');
+
+      if (mode === 'webcam') {
+        btnWebcam.classList.add('active', 'btn-primary');
+        btnWebcam.classList.remove('btn-outline-secondary');
+        btnEsp32.classList.remove('active', 'btn-primary');
+        btnEsp32.classList.add('btn-outline-secondary');
+
+        latestImg.style.display = 'none';
+        esp32Controls.classList.add('d-none');
+        esp32Controls.classList.remove('d-flex');
+        webcamControls.classList.remove('d-none');
+        webcamControls.classList.add('d-flex');
+        liveBadge.classList.remove('d-none');
+        hudTopChip.innerText = 'Kamera Laptop Aktif (Simulasi Pemicu PIR)';
+
+        await startWebcamStream();
+      } else {
+        btnEsp32.classList.add('active', 'btn-primary');
+        btnEsp32.classList.remove('btn-outline-secondary');
+        btnWebcam.classList.remove('active', 'btn-primary');
+        btnWebcam.classList.add('btn-outline-secondary');
+
+        latestImg.style.display = 'block';
+        if (webcamVid) webcamVid.style.display = 'none';
+        if (webcamImg) webcamImg.style.display = 'none';
+        webcamControls.classList.add('d-none');
+        webcamControls.classList.remove('d-flex');
+        esp32Controls.classList.remove('d-none');
+        esp32Controls.classList.add('d-flex');
+        liveBadge.classList.add('d-none');
+        hudTopChip.innerText = 'ESP32-S3 (OV2640 VGA) • Flash 500ms';
+
+        stopWebcamStream();
+      }
+    }
+
+    async function startWebcamStream() {
+      const webcamImg = document.getElementById('webcam-stream-img');
+      const video = document.getElementById('webcam-video');
+
+      if (window.isSecureContext && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
+            audio: false
+          });
+          webcamStream = stream;
+          video.srcObject = stream;
+          video.style.display = 'block';
+          webcamImg.style.display = 'none';
+          activeWebcamEngine = 'webrtc';
+          return;
+        } catch (e) {
+          console.warn('WebRTC dibatasi browser, beralih ke Backend OpenCV...', e);
+        }
+      }
+
+      video.style.display = 'none';
+      webcamImg.style.display = 'block';
+      webcamImg.src = `/api/webcam_feed?t=${new Date().getTime()}`;
+      activeWebcamEngine = 'opencv';
+      webcamStream = 'active_opencv';
+    }
+
+    function stopWebcamStream() {
+      if (autoPirInterval) {
+        clearInterval(autoPirInterval);
+        autoPirInterval = null;
+        const label = document.getElementById('auto-pir-btn-label');
+        if (label) label.innerText = 'Auto-PIR (Tiap 3 Detik)';
+      }
+
+      if (webcamStream && typeof webcamStream === 'object' && webcamStream.getTracks) {
+        webcamStream.getTracks().forEach(track => track.stop());
+      }
+      webcamStream = null;
+
+      fetch('/api/webcam_stop', { method: 'POST' }).catch(() => {});
+
+      const webcamImg = document.getElementById('webcam-stream-img');
+      if (webcamImg) {
+        webcamImg.src = '';
+        webcamImg.style.display = 'none';
+      }
+
+      const video = document.getElementById('webcam-video');
+      if (video) {
+        video.srcObject = null;
+        video.style.display = 'none';
+      }
+
+      activeWebcamEngine = 'none';
+    }
+
+    function showLatestResultView() {
+      const latestImg = document.getElementById('latest-image');
+      const webcamVid = document.getElementById('webcam-video');
+      const webcamImg = document.getElementById('webcam-stream-img');
+      latestImg.style.display = 'block';
+      if (webcamVid) webcamVid.style.display = 'none';
+      if (webcamImg) webcamImg.style.display = 'none';
+      refreshImageManual();
+    }
+
+    async function captureWebcamSnapshot(withFlashSimulation = true) {
+      const video = document.getElementById('webcam-video');
+      const webcamImg = document.getElementById('webcam-stream-img');
+      const canvas = document.getElementById('webcam-canvas');
+      const flashOverlay = document.getElementById('flash-effect-overlay');
+      const snapBtn = document.getElementById('btn-snap-webcam');
+
+      if (!activeWebcamEngine || activeWebcamEngine === 'none') {
+        alert('Kamera laptop belum aktif!');
+        return;
+      }
+
+      if (snapBtn) {
+        snapBtn.disabled = true;
+        snapBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Flash &amp; Deteksi...';
+      }
+
+      // Flash 500ms
+      if (withFlashSimulation && flashOverlay) {
+        flashOverlay.style.display = 'block';
+        flashOverlay.style.opacity = '0.9';
+        await new Promise(r => setTimeout(r, 450));
+        flashOverlay.style.opacity = '0';
+        setTimeout(() => { flashOverlay.style.display = 'none'; }, 150);
+      }
+
+      if (activeWebcamEngine === 'opencv') {
+        try {
+          const res = await fetch('/api/webcam_capture', { method: 'POST' });
+          const result = await res.json();
+          if (result.status === 'success') {
+            await fetchStatus();
+            showLatestResultView();
+
+            if (!autoPirInterval) {
+              setTimeout(() => {
+                if (currentViewMode === 'webcam') {
+                  document.getElementById('latest-image').style.display = 'none';
+                  webcamImg.style.display = 'block';
+                }
+              }, 3500);
+            }
+          }
+        } catch (err) {
+          console.error('Error saat capture OpenCV:', err);
+        } finally {
+          if (snapBtn) {
+            snapBtn.disabled = false;
+            snapBtn.innerHTML = '<i class="bi bi-camera me-1"></i> Jepret &amp; Analisis (Flash 500ms)';
+          }
+        }
+        return;
+      }
+
+      // WebRTC Frame
+      canvas.width = 640;
+      canvas.height = 480;
+      const ctx = canvas.getContext('2d');
+      ctx.translate(640, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(video, 0, 0, 640, 480);
+
+      canvas.toBlob(async (blob) => {
+        try {
+          const formData = new FormData();
+          formData.append('image', blob, 'webcam_capture.jpg');
+
+          const response = await fetch('/api/detect', { method: 'POST', body: formData });
+          const result = await response.json();
+          if (result.status === 'success') {
+            await fetchStatus();
+            showLatestResultView();
+            if (!autoPirInterval) {
+              setTimeout(() => {
+                if (currentViewMode === 'webcam') {
+                  document.getElementById('latest-image').style.display = 'none';
+                  video.style.display = 'block';
+                }
+              }, 3500);
+            }
+          }
+        } catch (err) {
+          console.error('Error saat capture WebRTC:', err);
+        } finally {
+          if (snapBtn) {
+            snapBtn.disabled = false;
+            snapBtn.innerHTML = '<i class="bi bi-camera me-1"></i> Jepret &amp; Analisis (Flash 500ms)';
+          }
+        }
+      }, 'image/jpeg', 0.85);
+    }
+
+    function toggleAutoPir() {
+      const label = document.getElementById('auto-pir-btn-label');
+      if (autoPirInterval) {
+        clearInterval(autoPirInterval);
+        autoPirInterval = null;
+        label.innerText = 'Auto-PIR (Tiap 3 Detik)';
+      } else {
+        label.innerText = 'Auto-PIR Berjalan... (Klik Stop)';
+        captureWebcamSnapshot(true);
+        autoPirInterval = setInterval(() => {
+          captureWebcamSnapshot(true);
+        }, 3800);
+      }
+    }
+
+    // =========================================================================
+    // CHART.JS INITIATION
+    // =========================================================================
+    function initCharts() {
+      const ctxLatency = document.getElementById('latencyChart').getContext('2d');
+      latencyChartInstance = new Chart(ctxLatency, {
+        type: 'line',
+        data: {
+          labels: ['Uji 1', 'Uji 2', 'Uji 3', 'Uji 4', 'Uji 5'],
+          datasets: [
+            {
+              label: 'Waktu Inferensi Aktual (ms)',
+              data: [142, 138, 155, 129, 134],
+              borderColor: '#0284c7',
+              backgroundColor: 'rgba(2, 132, 199, 0.08)',
+              fill: true,
+              tension: 0.2,
+              pointBackgroundColor: '#0284c7',
+              pointRadius: 4
+            },
+            {
+              label: 'Batas NFR-01 (2.500 ms)',
+              data: [2500, 2500, 2500, 2500, 2500],
+              borderColor: '#dc2626',
+              borderDash: [5, 5],
+              fill: false,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { font: { family: 'Inter', size: 11 } }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { font: { family: 'Roboto Mono', size: 10 } },
+              grid: { color: '#e2e8f0' }
+            },
+            y: {
+              ticks: { font: { family: 'Roboto Mono', size: 10 } },
+              grid: { color: '#e2e8f0' },
+              suggestedMax: 350
+            }
+          }
+        }
+      });
+
+      const ctxDist = document.getElementById('distributionChart').getContext('2d');
+      distributionChartInstance = new Chart(ctxDist, {
+        type: 'doughnut',
+        data: {
+          labels: ['Manusia', 'Kendaraan', 'Hewan', 'Objek Lain'],
+          datasets: [{
+            data: [1, 1, 1, 0],
+            backgroundColor: ['#16a34a', '#0284c7', '#dc2626', '#94a3b8'],
+            borderWidth: 1,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { font: { family: 'Inter', size: 11 } }
+            }
+          },
+          cutout: '65%'
+        }
+      });
+    }
+
+    // Uji Coba Cepat 1-Klik
+    async function runSampleTest(sampleFilename, buttonElement) {
+      const origText = buttonElement.innerHTML;
+      buttonElement.disabled = true;
+      buttonElement.innerHTML = `<span>Memproses YOLOv8...</span>`;
+
+      try {
+        const response = await fetch('/api/test-sample', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sample_name: sampleFilename })
+        });
+        const res = await response.json();
+        if (res.status === 'success') {
+          fetchStatus();
+        } else {
+          alert('Gagal uji coba: ' + res.message);
+        }
+      } catch (err) {
+        alert('Kesalahan koneksi: ' + err);
+      } finally {
+        buttonElement.disabled = false;
+        buttonElement.innerHTML = origText;
+      }
+    }
+
+    // Polling Status Terkini
+    async function fetchStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+
+        // Model Badge
+        const modelBadge = document.getElementById('model-badge');
+        modelBadge.innerText = data.is_custom_model ? 'Model: Custom (best.pt)' : 'Model: YOLOv8n (Pretrained)';
+
+        // Status Lampu & Relay
+        const lampCard = document.getElementById('lamp-card');
+        const lampText = document.getElementById('lamp-status-text');
+        const lampSubtext = document.getElementById('lamp-subtext');
+        const lampIcon = document.getElementById('lamp-icon-box');
+
+        if (data.lamp_action === 'ON') {
+          lampCard.className = 'kpi-card kpi-lamp-on';
+          lampText.innerText = 'MENYALA (ON)';
+          lampText.className = 'kpi-value font-mono text-success';
+          lampSubtext.innerText = 'Relay GPIO 14 aktif (Durasi 10s + Extend)';
+          lampIcon.innerHTML = '<i class="bi bi-lightbulb-fill text-success"></i>';
+        } else {
+          lampCard.className = 'kpi-card kpi-lamp-off';
+          lampText.innerText = 'PADAM (OFF)';
+          lampText.className = 'kpi-value font-mono text-secondary';
+          lampSubtext.innerText = 'Relay GPIO 14 terbuka (Lampu mati)';
+          lampIcon.innerHTML = '<i class="bi bi-lightbulb-off text-muted"></i>';
+        }
+
+        // Kategori Objek
+        const catText = document.getElementById('category-text');
+        const classesList = document.getElementById('classes-list');
+        const priorityBadge = document.getElementById('priority-badge');
+
+        catText.innerText = data.category ? data.category.toUpperCase() : '-';
+        if (data.category === 'manusia') {
+          catText.className = 'kpi-value font-mono text-success';
+          priorityBadge.className = 'badge bg-success font-mono';
+          priorityBadge.innerText = 'Target Positif';
+        } else if (data.category === 'kendaraan') {
+          catText.className = 'kpi-value font-mono text-primary';
+          priorityBadge.className = 'badge bg-primary font-mono';
+          priorityBadge.innerText = 'Target Positif';
+        } else if (data.category === 'hewan') {
+          catText.className = 'kpi-value font-mono text-danger';
+          priorityBadge.className = 'badge bg-danger font-mono';
+          priorityBadge.innerText = 'Target Negatif';
+        } else {
+          catText.className = 'kpi-value font-mono text-secondary';
+          priorityBadge.className = 'badge bg-secondary font-mono';
+          priorityBadge.innerText = 'Siaga';
+        }
+
+        classesList.innerText = (data.detected_classes && data.detected_classes.length > 0)
+          ? 'Objek: ' + data.detected_classes.join(', ')
+          : 'Objek: Belum ada';
+
+        // Confidence & Latensi
+        const confPercent = data.confidence ? Math.round(data.confidence * 100) : 0;
+        document.getElementById('confidence-text').innerText = confPercent + '%';
+        document.getElementById('confidence-progress').style.width = confPercent + '%';
+
+        document.getElementById('latency-text').innerText = (data.inference_time_ms || 0) + ' ms';
+        document.getElementById('total-badge').innerText = (data.total_tests || 0) + ' Data';
+        document.getElementById('file-name-badge').innerText = data.file_name || 'Menunggu sinyal...';
+        document.getElementById('last-update-time').innerText = 'Waktu: ' + (data.timestamp || '-');
+
+        if (data.total_tests !== lastTotalCount) {
+          lastTotalCount = data.total_tests;
+          refreshImageManual();
+          loadLogsTable();
+        }
+      } catch (err) {
+        console.error('Fetch status error:', err);
+      }
+    }
+
+    // Riwayat Tabel & Galeri
+    let allLogsData = [];
+    let currentGalleryFilter = 'all';
+
+    async function loadLogsTable() {
+      try {
+        const res = await fetch('/api/logs');
+        const logs = await res.json();
+        allLogsData = logs || [];
+        const tbody = document.getElementById('logs-table-body');
+
+        renderGallery(allLogsData, currentGalleryFilter);
+
+        const sidebarBadge = document.getElementById('sidebar-gallery-badge');
+        if (sidebarBadge) sidebarBadge.innerText = allLogsData.length;
+
+        if (!logs || logs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4 font-mono">Belum ada data pengujian. Silakan jalankan deteksi.</td></tr>';
+          return;
+        }
+
+        let html = '';
+        let latencyPoints = [];
+        let labelPoints = [];
+        let counts = { manusia: 0, kendaraan: 0, hewan: 0, lain: 0 };
+
+        logs.forEach((row, idx) => {
+          const isLampOn = row.Status_Lampu_Keputusan === 'ON';
+          const badgeClass = isLampOn ? 'badge bg-success font-mono' : 'badge bg-secondary font-mono';
+
+          let catBadgeClass = 'badge bg-secondary';
+          const catLower = (row.Kategori || '').toLowerCase();
+          if (catLower === 'manusia') { catBadgeClass = 'badge bg-success'; counts.manusia++; }
+          else if (catLower === 'kendaraan') { catBadgeClass = 'badge bg-primary'; counts.kendaraan++; }
+          else if (catLower === 'hewan') { catBadgeClass = 'badge bg-danger'; counts.hewan++; }
+          else { counts.lain++; }
+
+          html += `
+            <tr style="cursor: pointer;" onclick="openPhotoAnalysisModal(${idx})" title="Klik untuk melihat detail foto">
+              <td class="text-center font-mono text-muted">${row.No}</td>
+              <td class="font-mono text-secondary">${row.Timestamp}</td>
+              <td class="font-mono text-truncate text-secondary" style="max-width: 150px;">${row.Nama_File}</td>
+              <td><span class="badge bg-light text-dark border font-mono">${row.Kelas_Terdeteksi}</span></td>
+              <td><span class="${catBadgeClass} font-mono">${row.Kategori}</span></td>
+              <td class="text-center font-mono fw-bold">${row.Confidence}</td>
+              <td class="text-center font-mono text-primary">${row.Waktu_Inferensi_ms} ms</td>
+              <td class="text-center"><span class="${badgeClass}">${row.Status_Lampu_Keputusan}</span></td>
+            </tr>
+          `;
+
+          if (idx < 10) {
+            latencyPoints.unshift(parseFloat(row.Waktu_Inferensi_ms) || 0);
+            labelPoints.unshift('#' + row.No);
+          }
+        });
+
+        tbody.innerHTML = html;
+
+        if (latencyChartInstance && latencyPoints.length > 0) {
+          latencyChartInstance.data.labels = labelPoints;
+          latencyChartInstance.data.datasets[0].data = latencyPoints;
+          latencyChartInstance.data.datasets[1].data = labelPoints.map(() => 2500);
+          latencyChartInstance.update();
+        }
+
+        if (distributionChartInstance) {
+          distributionChartInstance.data.datasets[0].data = [
+            counts.manusia,
+            counts.kendaraan,
+            counts.hewan,
+            counts.lain
+          ];
+          distributionChartInstance.update();
+        }
+
+      } catch (err) {
+        console.error('Logs load error:', err);
+      }
+    }
+
+    // Render Galeri Foto
+    function renderGallery(logsList, filterType) {
+      const grid = document.getElementById('gallery-grid');
+      const countBadge = document.getElementById('gallery-count-badge');
+
+      if (!logsList || logsList.length === 0) {
+        grid.innerHTML = '<div class="col-12 text-center text-muted py-4 font-mono">Belum ada riwayat foto tersimpan.</div>';
+        if (countBadge) countBadge.innerText = '0 Foto';
+        return;
+      }
+
+      let filtered = logsList;
+      if (filterType === 'ON' || filterType === 'OFF') {
+        filtered = logsList.filter(row => row.Status_Lampu_Keputusan === filterType);
+      } else if (filterType !== 'all') {
+        filtered = logsList.filter(row => (row.Kategori || '').toLowerCase() === filterType.toLowerCase());
+      }
+
+      if (countBadge) countBadge.innerText = `${filtered.length} Foto`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div class="col-12 text-center text-muted py-4 font-mono">Tidak ada foto pada kategori ini.</div>';
+        return;
+      }
+
+      let cardsHtml = '';
+      filtered.forEach((item) => {
+        const originalIndex = allLogsData.indexOf(item);
+        const isLampOn = item.Status_Lampu_Keputusan === 'ON';
+        const badgeClass = isLampOn ? 'badge bg-success' : 'badge bg-secondary';
+        const timeOnly = (item.Timestamp || '').split(' ')[1] || item.Timestamp;
+
+        cardsHtml += `
+          <div class="col-6 col-md-4 col-xl-3">
+            <div class="gallery-item" onclick="openPhotoAnalysisModal(${originalIndex})" title="Klik untuk analisis foto">
+              <div class="gallery-item-img">
+                <img src="${item.image_url}" alt="${item.Nama_File}" onerror="this.src='/static/latest_detection.jpg'">
+              </div>
+              <div class="gallery-item-info">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="fw-semibold text-truncate font-mono" style="max-width: 110px;">${item.Kelas_Terdeteksi}</span>
+                  <span class="${badgeClass} font-mono" style="font-size: 0.68rem;">${item.Status_Lampu_Keputusan}</span>
+                </div>
+                <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
+                  <span class="font-mono">${timeOnly}</span>
+                  <span class="font-mono text-primary">${item.Waktu_Inferensi_ms}ms</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      grid.innerHTML = cardsHtml;
+    }
+
+    function filterGallery(filterType, btnElement) {
+      currentGalleryFilter = filterType;
+      document.querySelectorAll('#gallery-filter-chips .filter-btn').forEach(b => b.classList.remove('active'));
+      if (btnElement) btnElement.classList.add('active');
+      renderGallery(allLogsData, filterType);
+    }
+
+    // Modal Analisis Foto
+    function openPhotoAnalysisModal(logIndex) {
+      const item = allLogsData[logIndex];
+      if (!item) return;
+
+      const imgElem = document.getElementById('modal-img-preview');
+      imgElem.src = item.image_url || '/static/latest_detection.jpg';
+      imgElem.onerror = () => { imgElem.src = '/static/latest_detection.jpg'; };
+
+      document.getElementById('modal-img-filename').innerText = item.Nama_File;
+      document.getElementById('modal-timestamp').innerText = 'Waktu: ' + item.Timestamp;
+      document.getElementById('modal-download-btn').href = item.image_url || '/static/latest_detection.jpg';
+      document.getElementById('modal-download-btn').setAttribute('download', item.Nama_File);
+
+      const isLampOn = item.Status_Lampu_Keputusan === 'ON';
+      const relayStatusElem = document.getElementById('modal-relay-status');
+      const relayBehaviorElem = document.getElementById('modal-relay-behavior');
+      const relayPinElem = document.getElementById('modal-relay-pin');
+
+      if (isLampOn) {
+        relayStatusElem.innerText = 'AKTIF (ON)';
+        relayStatusElem.className = 'fs-6 fw-bold font-mono text-success';
+        relayPinElem.className = 'badge bg-success font-mono';
+        relayPinElem.innerText = 'GPIO 14 AKTIF';
+        relayBehaviorElem.innerText = 'Relay mengalirkan arus 12V ke Lampu LED selama 10 detik (+ Extend jika ada gerakan).';
+      } else {
+        relayStatusElem.innerText = 'MATI (OFF)';
+        relayStatusElem.className = 'fs-6 fw-bold font-mono text-secondary';
+        relayPinElem.className = 'badge bg-secondary font-mono';
+        relayPinElem.innerText = 'GPIO 14 NONAKTIF';
+        relayBehaviorElem.innerText = 'Relay tetap terbuka. Lampu LED 12V tidak dinyalakan (Bukan target aktif).';
+      }
+
+      const catBadge = document.getElementById('modal-cat-badge');
+      const catLower = (item.Kategori || '').toLowerCase();
+      catBadge.innerText = (item.Kategori || '-').toUpperCase();
+      if (catLower === 'manusia') catBadge.className = 'badge bg-success font-mono';
+      else if (catLower === 'kendaraan') catBadge.className = 'badge bg-primary font-mono';
+      else if (catLower === 'hewan') catBadge.className = 'badge bg-danger font-mono';
+      else catBadge.className = 'badge bg-secondary font-mono';
+
+      document.getElementById('modal-classes').innerText = item.Kelas_Terdeteksi || 'Tidak Ada';
+      const confPct = Math.round(parseFloat(item.Confidence) * 100) || 0;
+      document.getElementById('modal-confidence').innerText = `${confPct}% (Ambang batas \u2265 50%)`;
+
+      const scenarioElem = document.getElementById('modal-scenario-code');
+      if (catLower === 'manusia') scenarioElem.innerText = 'SK-02: Manusia Melintas';
+      else if (catLower === 'kendaraan') scenarioElem.innerText = 'SK-03: Kendaraan Melintas';
+      else if (catLower === 'hewan') scenarioElem.innerText = 'SK-04: Hewan Melintas';
+      else scenarioElem.innerText = 'SK-05: Objek Diluar Kelas';
+
+      document.getElementById('modal-latency').innerText = `${item.Waktu_Inferensi_ms} ms (NFR-01: \u2264 2.500 ms)`;
+      document.getElementById('modal-notes').innerText = item.Keterangan || 'ESP32-S3 Kamera';
+
+      const modal = new bootstrap.Modal(document.getElementById('photoAnalysisModal'));
+      modal.show();
+    }
+
+    async function clearLogs() {
+      if (!confirm('Apakah Anda yakin ingin menghapus seluruh log pengujian?')) return;
+      try {
+        await fetch('/api/clear-logs', { method: 'POST' });
+        lastTotalCount = -1;
+        fetchStatus();
+      } catch (err) {
+        alert('Gagal mereset log: ' + err);
+      }
+    }
+
+    document.getElementById('upload-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById('test-file-input');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert('Pilih file gambar terlebih dahulu!');
+        return;
+      }
+
+      const btn = document.getElementById('btn-upload');
+      btn.disabled = true;
+      btn.innerText = 'Memproses...';
+
+      const formData = new FormData();
+      formData.append('image', fileInput.files[0]);
+
+      try {
+        const res = await fetch('/api/detect', { method: 'POST', body: formData });
+        await res.json();
+        fileInput.value = '';
+        fetchStatus();
+      } catch (err) {
+        alert('Gagal memproses gambar: ' + err);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Deteksi';
+      }
+    });
+
+    // Inisialisasi awal
+    window.addEventListener('DOMContentLoaded', () => {
+      initCharts();
+      fetchStatus();
+      loadLogsTable();
+      updateClock();
+      setInterval(updateClock, 1000);
+      setInterval(fetchStatus, 1500);
+    });
+  </script>
+</body>
+</html>

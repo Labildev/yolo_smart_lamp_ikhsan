@@ -356,6 +356,33 @@
       background: rgba(255, 255, 255, 0.04);
     }
 
+    /* Thumbnail in Table */
+    .log-thumbnail-box {
+      width: 52px;
+      height: 38px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: #0f172a;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .log-thumbnail-box:hover {
+      transform: scale(1.12);
+      border-color: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    }
+
+    .log-thumbnail-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     /* Form Controls */
     .form-control {
       background-color: #1e293b !important;
@@ -907,8 +934,8 @@
               <a href="/api/export-csv" class="btn btn-sm btn-success">
                 <i class="bi bi-download"></i> Unduh CSV
               </a>
-              <button class="btn btn-sm btn-outline-danger" onclick="clearLogs()">
-                <i class="bi bi-trash"></i> Bersihkan Log
+              <button class="btn btn-sm btn-outline-danger" onclick="clearLogs()" title="Hapus semua riwayat pengujian dan foto">
+                <i class="bi bi-trash"></i> Bersihkan Semua Log
               </button>
             </div>
           </div>
@@ -917,19 +944,21 @@
             <table class="custom-table" id="logsTable">
               <thead>
                 <tr>
-                  <th>No</th>
+                  <th style="width: 50px;">No</th>
+                  <th style="width: 70px;">Foto</th>
                   <th>Waktu Pengujian</th>
-                  <th>Nama Berkas Citra</th>
-                  <th>Kategori Objek</th>
-                  <th>Kelas Terdeteksi</th>
+                  <th>Nama Berkas</th>
+                  <th>Kategori</th>
+                  <th>Kelas Objek</th>
                   <th>Confidence</th>
                   <th>Waktu Inferensi</th>
                   <th>Keputusan Relay</th>
+                  <th style="width: 90px; text-align: center;">Aksi</th>
                 </tr>
               </thead>
               <tbody id="logsTableBody">
                 <tr>
-                  <td colspan="8" class="text-center py-4 text-white" style="opacity: 0.7;">Memuat data log pengujian...</td>
+                  <td colspan="10" class="text-center py-4 text-white" style="opacity: 0.7;">Memuat data log pengujian...</td>
                 </tr>
               </tbody>
             </table>
@@ -991,6 +1020,79 @@
     <footer class="p-3 bg-dark border-top border-secondary border-opacity-25 text-center text-white small mt-auto" style="opacity: 0.85;">
       Sistem Kendali Lampu Pintar Menggunakan Deep Learning (YOLOv8) &bull; Ikhsan Wahyudi (235520110043) &bull; S1 Informatika Universitas Almuslim &bull; 2026
     </footer>
+  </div>
+
+  <!-- Modal Pratinjau Foto Pengujian -->
+  <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="photoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content bg-dark text-white border border-secondary shadow-lg">
+        <div class="modal-header border-secondary border-opacity-25" style="background: #111827;">
+          <h5 class="modal-title fw-bold d-flex align-items-center gap-2" id="photoModalLabel">
+            <i class="bi bi-camera-fill text-info"></i>
+            <span>Pratinjau Hasil Tangkapan &amp; Deteksi YOLOv8</span>
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4" style="background: #0b1120;">
+          <div class="text-center mb-3 position-relative rounded overflow-hidden border border-secondary border-opacity-50" style="background: #030712; min-height: 280px; display: flex; align-items: center; justify-content: center;">
+            <img id="modalPreviewImg" src="" alt="Foto Deteksi" class="img-fluid" style="max-height: 480px; object-fit: contain;">
+            <div id="modalImgBadge" class="position-absolute top-0 start-0 m-2 badge bg-success px-3 py-2 fs-6 shadow">
+              RELAY ON
+            </div>
+          </div>
+          
+          <div class="row g-3">
+            <div class="col-sm-6 col-md-3">
+              <div class="p-2 rounded bg-dark border border-secondary border-opacity-25">
+                <div class="small text-white" style="opacity: 0.7;">No &amp; Waktu</div>
+                <div class="fw-bold font-mono text-info" id="modalMetaTime"># -</div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <div class="p-2 rounded bg-dark border border-secondary border-opacity-25">
+                <div class="small text-white" style="opacity: 0.7;">Kategori Terdeteksi</div>
+                <div class="fw-bold text-uppercase" id="modalMetaCat">-</div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <div class="p-2 rounded bg-dark border border-secondary border-opacity-25">
+                <div class="small text-white" style="opacity: 0.7;">Confidence Score</div>
+                <div class="fw-bold font-mono text-warning" id="modalMetaConf">0.0%</div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <div class="p-2 rounded bg-dark border border-secondary border-opacity-25">
+                <div class="small text-white" style="opacity: 0.7;">Waktu Inferensi</div>
+                <div class="fw-bold font-mono text-success" id="modalMetaLatency">0.0 ms</div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="p-2 rounded bg-dark border border-secondary border-opacity-25 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                  <span class="small text-white me-2" style="opacity: 0.7;">Nama Berkas:</span>
+                  <span class="font-mono text-info fw-bold" id="modalMetaFilename">-</span>
+                </div>
+                <div>
+                  <span class="small text-white me-2" style="opacity: 0.7;">Kelas Objek:</span>
+                  <span class="badge bg-primary" id="modalMetaClasses">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-secondary border-opacity-25 justify-content-between" style="background: #111827;">
+          <button type="button" class="btn btn-outline-danger d-flex align-items-center gap-1" onclick="deleteCurrentModalLog()">
+            <i class="bi bi-trash"></i> Hapus Foto &amp; Baris Ini
+          </button>
+          <div class="d-flex gap-2">
+            <a id="modalDownloadBtn" href="#" download class="btn btn-outline-info d-flex align-items-center gap-1">
+              <i class="bi bi-download"></i> Unduh Foto
+            </a>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Bootstrap 5 JS -->
@@ -1181,27 +1283,32 @@
       }
     }
 
+    // Global Logs State
+    let currentLogs = [];
+    let currentModalIndex = -1;
+
     // Load Logs from /api/logs
     async function loadLogsTable() {
       try {
         const res = await fetch('/api/logs');
         if (!res.ok) return;
         const logs = await res.json();
+        currentLogs = logs || [];
         
         const tbody = document.getElementById('logsTableBody');
         const countLabel = document.getElementById('logCountLabel');
         const totalTests = document.getElementById('kpi-total-tests');
 
-        if (totalTests) totalTests.textContent = 'Total Uji: ' + logs.length + ' kali';
-        if (countLabel) countLabel.textContent = `Menampilkan ${logs.length} data pengujian`;
+        if (totalTests) totalTests.textContent = 'Total Uji: ' + currentLogs.length + ' kali';
+        if (countLabel) countLabel.textContent = `Menampilkan ${currentLogs.length} data pengujian`;
 
-        if (!logs || logs.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-white" style="opacity: 0.7;">Belum ada riwayat pengujian. Silakan lakukan deteksi melalui ESP32 atau Test Lab.</td></tr>';
+        if (!currentLogs || currentLogs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="10" class="text-center py-4 text-white" style="opacity: 0.7;">Belum ada riwayat pengujian. Silakan lakukan deteksi melalui Kamera Laptop, Unggah Citra, atau ESP32.</td></tr>';
           return;
         }
 
         // Build Rows (terbaru di atas)
-        tbody.innerHTML = logs.map((row, idx) => {
+        tbody.innerHTML = currentLogs.map((row, idx) => {
           const isON = (row.Status_Lampu_Keputusan === 'ON' || row.lamp_action === 'ON');
           const statusBadge = isON 
             ? '<span class="badge bg-success">RELAY ON</span>' 
@@ -1213,25 +1320,145 @@
           else if (cat === 'hewan') catBadge = '<span class="badge bg-warning text-dark fw-bold">' + cat + '</span>';
           else if (cat === 'kendaraan') catBadge = '<span class="badge bg-primary">' + cat + '</span>';
 
+          const fileName = row.Nama_File || row.file_name || '';
+          const imgUrl = row.image_url || ('/uploads/' + fileName);
+          const rowNo = row.No || (idx + 1);
+
           return `
             <tr>
-              <td class="font-mono text-info fw-bold">${idx + 1}</td>
+              <td class="font-mono text-info fw-bold">${rowNo}</td>
+              <td class="text-center">
+                <div class="log-thumbnail-box" onclick="openPhotoModal(${idx})" title="Klik untuk memperbesar pratinjau">
+                  <img src="${imgUrl}" alt="Foto #${rowNo}" onerror="this.onerror=null; this.src='/static/latest_detection.jpg';">
+                </div>
+              </td>
               <td class="font-mono text-white">${row.Timestamp || row.timestamp || '-'}</td>
-              <td class="font-mono small text-truncate text-white" style="max-width: 140px;">${row.Nama_File || row.file_name || '-'}</td>
+              <td class="font-mono small text-truncate text-white" style="max-width: 140px;" title="${fileName}">${fileName || '-'}</td>
               <td>${catBadge}</td>
               <td class="font-mono text-white">${row.Kelas_Terdeteksi || row.detected_classes || '-'}</td>
               <td class="font-mono text-warning">${row.Confidence || row.confidence || '0.0'}</td>
               <td class="font-mono text-info">${row.Waktu_Inferensi_ms || row.inference_time_ms || '0'} ms</td>
               <td>${statusBadge}</td>
+              <td class="text-center">
+                <div class="d-flex align-items-center justify-content-center gap-1">
+                  <button class="btn btn-sm btn-outline-info p-1 px-2" onclick="openPhotoModal(${idx})" title="Lihat Pratinjau Foto">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger p-1 px-2" onclick="deleteSingleLog('${fileName}', '${rowNo}')" title="Hapus Riwayat & Berkas">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
             </tr>
           `;
         }).join('');
 
         // Update Charts Data
-        updateChartsData(logs);
+        updateChartsData(currentLogs);
 
       } catch (err) {
         console.error('Gagal mengambil logs:', err);
+      }
+    }
+
+    // Modal & Delete Handlers
+    function openPhotoModal(idx) {
+      if (!currentLogs || !currentLogs[idx]) return;
+      currentModalIndex = idx;
+      const item = currentLogs[idx];
+
+      const fileName = item.Nama_File || item.file_name || '';
+      const imgUrl = item.image_url || ('/uploads/' + fileName);
+      const isON = (item.Status_Lampu_Keputusan === 'ON' || item.lamp_action === 'ON');
+      const cat = (item.Kategori || item.category || '-').toUpperCase();
+      const classes = item.Kelas_Terdeteksi || item.detected_classes || '-';
+      const conf = item.Confidence || item.confidence || '0.0';
+      const latency = item.Waktu_Inferensi_ms || item.inference_time_ms || '0';
+      const timeStr = item.Timestamp || item.timestamp || '-';
+      const no = item.No || (idx + 1);
+
+      const previewImg = document.getElementById('modalPreviewImg');
+      previewImg.src = imgUrl;
+      previewImg.onerror = function() {
+        this.onerror = null;
+        this.src = '/static/latest_detection.jpg';
+      };
+
+      const badgeEl = document.getElementById('modalImgBadge');
+      if (isON) {
+        badgeEl.className = 'position-absolute top-0 start-0 m-2 badge bg-success px-3 py-2 fs-6 shadow';
+        badgeEl.innerHTML = '<i class="bi bi-lightbulb-fill me-1"></i> RELAY ON (LAMPU MENYALA)';
+      } else {
+        badgeEl.className = 'position-absolute top-0 start-0 m-2 badge bg-secondary px-3 py-2 fs-6 shadow text-white';
+        badgeEl.innerHTML = '<i class="bi bi-lightbulb-off me-1"></i> RELAY OFF (LAMPU PADAM)';
+      }
+
+      document.getElementById('modalMetaTime').textContent = `#${no} • ${timeStr}`;
+      document.getElementById('modalMetaCat').textContent = cat;
+      const confFormatted = typeof conf === 'number' ? (conf * 100).toFixed(1) + '%' : (String(conf).includes('%') ? conf : (parseFloat(conf) * 100).toFixed(1) + '%');
+      document.getElementById('modalMetaConf').textContent = confFormatted;
+      document.getElementById('modalMetaLatency').textContent = `${parseFloat(latency).toFixed(1)} ms`;
+      document.getElementById('modalMetaFilename').textContent = fileName || '-';
+      document.getElementById('modalMetaClasses').textContent = classes;
+
+      const downloadBtn = document.getElementById('modalDownloadBtn');
+      downloadBtn.href = imgUrl;
+      downloadBtn.download = fileName || 'deteksi_yolov8.jpg';
+
+      const modalEl = document.getElementById('photoModal');
+      const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+      modal.show();
+    }
+
+    async function deleteSingleLog(fileName, rowNo) {
+      if (!confirm(`Hapus data pengujian #${rowNo} (${fileName}) beserta berkas fotonya?`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/delete-log', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ file_name: fileName, no: rowNo })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          await loadLogsTable();
+          await fetchStatus();
+        } else {
+          alert('Gagal menghapus log: ' + (data.message || 'Terjadi kesalahan'));
+        }
+      } catch (err) {
+        alert('Terjadi kesalahan jaringan: ' + err.message);
+      }
+    }
+
+    async function deleteCurrentModalLog() {
+      if (currentModalIndex < 0 || !currentLogs || !currentLogs[currentModalIndex]) return;
+      const item = currentLogs[currentModalIndex];
+      const fileName = item.Nama_File || item.file_name || '';
+      const rowNo = item.No || (currentModalIndex + 1);
+
+      if (!confirm(`Hapus foto dan data #${rowNo} (${fileName}) secara permanen?`)) return;
+
+      try {
+        const res = await fetch('/api/delete-log', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ file_name: fileName, no: rowNo })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          const modalEl = document.getElementById('photoModal');
+          const modal = bootstrap.Modal.getInstance(modalEl);
+          if (modal) modal.hide();
+          await loadLogsTable();
+          await fetchStatus();
+        } else {
+          alert('Gagal menghapus log: ' + (data.message || 'Error'));
+        }
+      } catch (err) {
+        alert('Kesalahan jaringan: ' + err.message);
       }
     }
 

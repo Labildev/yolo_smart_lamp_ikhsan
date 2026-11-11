@@ -107,11 +107,66 @@ def get_total_tests_count():
         except Exception:
             return 0
 
+def delete_log_entry(file_name_or_no):
+    """Menghapus 1 baris pengujian dari CSV dan menghapus berkas citranya di uploads/."""
+    with _csv_lock:
+        init_logger()
+        uploads_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+        new_rows = []
+        deleted = False
+        target_str = str(file_name_or_no).strip()
+
+        try:
+            with open(CSV_PATH, mode='r', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                header = next(reader, None)
+                if header:
+                    new_rows.append(header)
+                for row in reader:
+                    if len(row) > 2:
+                        row_no = str(row[0]).strip()
+                        row_file = str(row[2]).strip()
+                        if row_file == target_str or row_no == target_str:
+                            deleted = True
+                            # Hapus file gambar terkait jika ada di folder uploads/
+                            target_path = os.path.join(uploads_dir, row_file)
+                            if os.path.exists(target_path):
+                                try:
+                                    os.remove(target_path)
+                                except Exception:
+                                    pass
+                            continue
+                    new_rows.append(row)
+
+            if deleted:
+                # Re-indeks nomor urut No (kolom ke-0)
+                for idx in range(1, len(new_rows)):
+                    new_rows[idx][0] = str(idx)
+
+                with open(CSV_PATH, mode='w', newline='', encoding='utf-8') as f:
+                    writer = csv.writer(f)
+                    writer.writerows(new_rows)
+
+            return deleted
+        except Exception as e:
+            print(f"[LOGGER-ERROR] Gagal menghapus baris log: {e}")
+            return False
+
 def clear_logs():
-    """Mereset data log untuk sesi pengujian baru."""
+    """Mereset data log untuk sesi pengujian baru dan membersihkan file foto hasil jepretan."""
     with _csv_lock:
         os.makedirs(DATA_DIR, exist_ok=True)
         with open(CSV_PATH, mode='w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             writer.writerow(CSV_HEADERS)
+
+        # Bersihkan seluruh file foto di folder uploads/
+        uploads_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+        if os.path.exists(uploads_dir):
+            for fname in os.listdir(uploads_dir):
+                if fname.lower().endswith(('.jpg', '.jpeg', '.png')):
+                    try:
+                        os.remove(os.path.join(uploads_dir, fname))
+                    except Exception:
+                        pass
 

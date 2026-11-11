@@ -13,3 +13,5 @@ No,Timestamp,Nama_File,Kelas_Terdeteksi,Kategori,Confidence,Waktu_Inferensi_ms,S
 12,2026-11-12 00:15:55,detect_20261112_001555_769.jpg,"manusia, manusia",manusia,0.84,3570.5,ON,Model Pretrained (Fallback)
 13,2026-11-12 00:15:55,detect_20261112_001555_868.jpg,kucing,hewan,0.71,75.5,OFF,Model Pretrained (Fallback)
 14,2026-11-12 00:15:55,detect_20261112_001555_952.jpg,"mobil, manusia, manusia, manusia",manusia,0.87,61.5,ON,Model Pretrained (Fallback)
+15,2026-11-12 02:28:36,detect_20261112_022836_857.jpg,"manusia, manusia",manusia,0.91,21317.4,ON,Webcam Laptop OpenCV
+16,2026-11-12 02:28:36,detect_20261112_022836_914.jpg,"manusia, manusia",manusia,0.92,15428.0,ON,Webcam Laptop OpenCV

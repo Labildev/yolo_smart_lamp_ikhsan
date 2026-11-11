@@ -37,7 +37,9 @@ runs_lampu_pintar/
 *.engine
 *.onnx
 
-# Upload foto pengujian opsional (bila tidak ingin memenuhi repositori)
-# Uncomment jika ingin mengabaikan foto uploads:
-# server/uploads/*.jpg
+# Upload foto pengujian dinamis (agar repositori tetap bersih dan ringan)
+server/uploads/*.jpg
+server/uploads/*.jpeg
+server/uploads/*.png
+!server/uploads/.gitkeep
 

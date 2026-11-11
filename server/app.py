@@ -22,7 +22,7 @@ import time
 from datetime import datetime
 from flask import Flask, request, jsonify, render_template, send_file, send_from_directory, Response
 from detector import YOLOv8Detector
-from logger import log_detection, get_recent_logs, get_total_tests_count, clear_logs, CSV_PATH
+from logger import log_detection, get_recent_logs, get_total_tests_count, clear_logs, delete_log_entry, CSV_PATH
 from webcam import OpenCVWebcam
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -211,6 +211,19 @@ def api_clear_logs():
     })
     return jsonify({'status': 'success', 'message': 'Log pengujian berhasil direset.'})
 
+@app.route('/api/delete-log', methods=['POST'])
+def api_delete_log():
+    """Menghapus 1 baris riwayat pengujian dan berkas fotonya."""
+    data = request.get_json(silent=True) or {}
+    target = data.get('file_name') or data.get('no')
+    if not target:
+        return jsonify({'status': 'error', 'message': 'Parameter file_name atau no diperlukan.'}), 400
+
+    success = delete_log_entry(target)
+    if success:
+        return jsonify({'status': 'success', 'message': f'Data {target} berhasil dihapus.'}), 200
+    return jsonify({'status': 'error', 'message': f'Data {target} tidak ditemukan.'}), 404
+
 @app.route('/uploads/<path:filename>')
 def serve_uploads(filename):
     """Menyajikan arsip foto hasil tangkapan di folder uploads."""
@@ -222,9 +235,10 @@ def api_test_sample():
     """Menjalankan deteksi instan menggunakan sampel foto untuk kemudahan presentasi skripsi."""
     global latest_state
     try:
-        sample_name = request.json.get('sample_name') if request.is_json else request.form.get('sample_name')
+        data = request.get_json(silent=True) or (request.form.to_dict() if request.form else {})
+        sample_name = data.get('sample_name') or data.get('filename')
         if not sample_name:
-            return jsonify({'status': 'error', 'message': 'Parameter sample_name tidak diberikan'}), 400
+            return jsonify({'status': 'error', 'message': 'Parameter sample_name atau filename tidak diberikan'}), 400
 
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         sample_path = os.path.join(project_root, 'sample_images', sample_name)

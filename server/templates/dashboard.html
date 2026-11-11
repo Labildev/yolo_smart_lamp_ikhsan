@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-bs-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,46 +21,67 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <style>
-    :root {
+    :root, [data-bs-theme="dark"] {
       --sidebar-width: 270px;
       --sidebar-bg: #0f172a;
       --sidebar-hover: #1e293b;
       --sidebar-active: #0284c7;
-      --sidebar-border: rgba(255, 255, 255, 0.08);
+      --sidebar-border: rgba(255, 255, 255, 0.12);
       
-      --body-bg: #f8fafc;
-      --card-bg: #ffffff;
-      --border-color: #e2e8f0;
+      --body-bg: #090d16;
+      --card-bg: #111827;
+      --border-color: rgba(255, 255, 255, 0.12);
       --border-focus: #38bdf8;
       
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --text-secondary: #334155;
+      --text-main: #ffffff;
+      --text-body: #e2e8f0;
+      --text-muted: #cbd5e1;
+      --bs-body-color: #ffffff;
+      --bs-body-bg: #090d16;
       
-      --primary: #0284c7;
-      --primary-light: #e0f2fe;
-      --success: #10b981;
-      --success-light: #ecfdf5;
-      --warning: #f59e0b;
-      --warning-light: #fffbeb;
-      --danger: #ef4444;
-      --danger-light: #fef2f2;
+      --primary: #38bdf8;
+      --primary-light: rgba(56, 189, 248, 0.15);
+      --success: #34d399;
+      --success-light: rgba(52, 211, 153, 0.15);
+      --warning: #fbbf24;
+      --warning-light: rgba(251, 191, 36, 0.15);
+      --danger: #f87171;
+      --danger-light: rgba(248, 113, 113, 0.15);
     }
 
     * { box-sizing: border-box; }
 
     body {
       background-color: var(--body-bg);
-      color: var(--text-main);
+      color: #ffffff !important;
       font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       min-height: 100vh;
       margin: 0;
       padding: 0;
+      line-height: 1.6;
     }
 
     .font-mono {
       font-family: 'JetBrains Mono', Menlo, Consolas, monospace;
+    }
+
+    /* Force all text elements to have crisp, high-contrast colors */
+    h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+      color: #ffffff !important;
+      font-weight: 700;
+    }
+
+    p, span, div, li, td, th {
+      color: inherit;
+    }
+
+    .text-muted {
+      color: #cbd5e1 !important; /* Brighter, high-contrast slate */
+    }
+
+    .text-secondary {
+      color: #e2e8f0 !important;
     }
 
     /* =========================================================================
@@ -82,21 +103,21 @@
     }
 
     .sidebar-header {
-      padding: 20px;
+      padding: 22px 20px;
       border-bottom: 1px solid var(--sidebar-border);
     }
 
     .brand-title {
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 800;
-      color: #ffffff;
+      color: #ffffff !important;
       margin: 0;
       letter-spacing: -0.02em;
     }
 
     .researcher-card {
-      padding: 14px 18px;
-      background: rgba(255, 255, 255, 0.03);
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.04);
       border-bottom: 1px solid var(--sidebar-border);
     }
 
@@ -106,21 +127,21 @@
     }
 
     .nav-label {
-      font-size: 0.68rem;
+      font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: #64748b;
-      padding: 10px 12px 6px;
+      color: #94a3b8 !important;
+      padding: 10px 14px 6px;
     }
 
     .sidebar-nav a {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 10px 14px;
-      color: #94a3b8;
-      font-size: 0.85rem;
+      padding: 11px 14px;
+      color: #cbd5e1 !important;
+      font-size: 0.88rem;
       font-weight: 500;
       text-decoration: none;
       border-radius: 8px;
@@ -130,45 +151,45 @@
 
     .sidebar-nav a:hover {
       background: var(--sidebar-hover);
-      color: #ffffff;
+      color: #ffffff !important;
     }
 
     .sidebar-nav a.active {
       background: var(--sidebar-active);
-      color: #ffffff;
+      color: #ffffff !important;
       font-weight: 600;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);
     }
 
     .sidebar-nav a i {
-      font-size: 1.1rem;
-      width: 20px;
+      font-size: 1.15rem;
+      width: 22px;
       text-align: center;
     }
 
     .sidebar-diag {
       padding: 14px 16px;
       margin: 12px;
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--sidebar-border);
       border-radius: 10px;
-      font-size: 0.74rem;
+      font-size: 0.78rem;
       color: #cbd5e1;
     }
 
     .sidebar-footer {
       padding: 14px 18px;
       border-top: 1px solid var(--sidebar-border);
-      font-size: 0.74rem;
-      color: #64748b;
-      background: rgba(0, 0, 0, 0.2);
+      font-size: 0.76rem;
+      color: #94a3b8;
+      background: rgba(0, 0, 0, 0.25);
     }
 
     .sidebar-backdrop {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.6);
       z-index: 1040;
     }
 
@@ -184,9 +205,9 @@
     }
 
     .top-navbar {
-      background: #ffffff;
+      background: #0f172a;
       border-bottom: 1px solid var(--border-color);
-      padding: 12px 28px;
+      padding: 14px 28px;
       position: sticky;
       top: 0;
       z-index: 1020;
@@ -196,8 +217,8 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 8px var(--success);
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
       display: inline-block;
       margin-right: 6px;
       animation: pulse 2s infinite;
@@ -212,39 +233,39 @@
     .admin-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
       margin-bottom: 24px;
       overflow: hidden;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .card-header-clean {
-      padding: 16px 20px;
+      padding: 18px 22px;
       border-bottom: 1px solid var(--border-color);
-      background: #ffffff;
+      background: #111827;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
     .card-title-clean {
-      font-size: 0.94rem;
+      font-size: 0.98rem;
       font-weight: 700;
-      color: var(--text-main);
+      color: #ffffff !important;
       margin: 0;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     /* KPI Metric Cards */
     .kpi-card {
-      padding: 20px;
-      border-radius: 12px;
+      padding: 22px;
+      border-radius: 14px;
       border: 1px solid var(--border-color);
-      background: #ffffff;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      background: #111827;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       display: flex;
       align-items: center;
       gap: 18px;
@@ -252,26 +273,26 @@
     }
 
     .kpi-icon-box {
-      width: 52px;
-      height: 52px;
+      width: 54px;
+      height: 54px;
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
+      font-size: 1.7rem;
       flex-shrink: 0;
     }
 
     .kpi-relay-on {
-      background: var(--success-light);
-      color: var(--success);
-      border: 1px solid rgba(16, 185, 129, 0.2);
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
     }
 
     .kpi-relay-off {
-      background: #f1f5f9;
-      color: #64748b;
-      border: 1px solid #cbd5e1;
+      background: rgba(255, 255, 255, 0.05);
+      color: #94a3b8;
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     /* Lamp Visual Indicator */
@@ -283,28 +304,28 @@
     }
 
     .lamp-glow-on {
-      background: #f59e0b;
-      box-shadow: 0 0 14px #f59e0b, 0 0 24px #fbbf24;
+      background: #fbbf24;
+      box-shadow: 0 0 14px #fbbf24, 0 0 26px #f59e0b;
     }
 
     .lamp-glow-off {
-      background: #94a3b8;
+      background: #64748b;
     }
 
     /* Drag and Drop Zone */
     .drop-zone {
-      border: 2px dashed #cbd5e1;
-      border-radius: 12px;
-      padding: 30px 20px;
+      border: 2px dashed rgba(56, 189, 248, 0.4);
+      border-radius: 14px;
+      padding: 32px 20px;
       text-align: center;
-      background: #f8fafc;
+      background: rgba(255, 255, 255, 0.03);
       cursor: pointer;
       transition: all 0.2s ease;
     }
 
     .drop-zone:hover, .drop-zone.dragover {
       border-color: var(--primary);
-      background: #f0f9ff;
+      background: rgba(56, 189, 248, 0.08);
     }
 
     /* Table */
@@ -312,26 +333,43 @@
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      font-size: 0.84rem;
+      font-size: 0.88rem;
     }
 
     .custom-table th {
-      background: #f8fafc;
-      color: var(--text-muted);
-      font-weight: 600;
-      padding: 12px 16px;
+      background: #1e293b;
+      color: #93c5fd !important;
+      font-weight: 700;
+      padding: 14px 18px;
       border-bottom: 1px solid var(--border-color);
       white-space: nowrap;
     }
 
     .custom-table td {
-      padding: 12px 16px;
-      border-bottom: 1px solid #f1f5f9;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       vertical-align: middle;
+      color: #f1f5f9 !important;
     }
 
     .custom-table tr:hover td {
-      background: #f8fafc;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    /* Form Controls */
+    .form-control {
+      background-color: #1e293b !important;
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary) !important;
+      box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.25) !important;
+    }
+
+    .form-control::placeholder {
+      color: #94a3b8 !important;
     }
 
     /* Responsive */
@@ -367,7 +405,7 @@
           <span class="fs-4">💡</span>
           <div>
             <div class="brand-title">SmartLamp AI</div>
-            <div class="small text-muted font-mono" style="font-size: 0.7rem;">YOLOv8 &bull; ESP32-S3</div>
+            <div class="small font-mono text-info" style="font-size: 0.72rem;">YOLOv8 &bull; ESP32-S3</div>
           </div>
         </a>
         <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-mono" style="font-size: 0.65rem;">v1.0</span>
@@ -378,10 +416,10 @@
     <div class="researcher-card">
       <div class="d-flex align-items-center gap-2 mb-1">
         <i class="bi bi-person-fill text-info"></i>
-        <span class="text-white fw-bold" style="font-size: 0.82rem;">Ikhsan Wahyudi</span>
+        <span class="text-white fw-bold" style="font-size: 0.88rem;">Ikhsan Wahyudi</span>
       </div>
-      <div class="font-mono text-muted" style="font-size: 0.72rem;">NPM: 235520110043</div>
-      <div class="text-muted" style="font-size: 0.7rem;">Informatika Universitas Almuslim</div>
+      <div class="font-mono text-warning" style="font-size: 0.76rem;">NPM: 235520110043</div>
+      <div class="text-white small" style="font-size: 0.74rem; opacity: 0.85;">Informatika Universitas Almuslim</div>
     </div>
 
     <!-- Navigation Menu -->
@@ -409,7 +447,7 @@
       </a>
 
       <div class="nav-label mt-3">Tautan Eksternal</div>
-      <a href="/" class="text-info">
+      <a href="/" class="text-info fw-semibold">
         <i class="bi bi-box-arrow-left"></i>
         <span>Kembali ke Landing Page</span>
       </a>
@@ -422,23 +460,23 @@
         <span class="badge bg-success font-mono" style="font-size: 0.65rem;">ONLINE</span>
       </div>
       <div class="d-flex justify-content-between mb-1">
-        <span class="text-muted">Target Host:</span>
-        <span class="font-mono text-white text-truncate" style="max-width: 130px;">ikhsan.mhsfikom.my.id</span>
+        <span class="text-white" style="opacity: 0.8;">Target Host:</span>
+        <span class="font-mono text-info text-truncate" style="max-width: 130px;">ikhsan.mhsfikom.my.id</span>
       </div>
       <div class="d-flex justify-content-between mb-1">
-        <span class="text-muted">Model AI:</span>
-        <span class="font-mono text-info" id="side-model-type">yolov8n.pt</span>
+        <span class="text-white" style="opacity: 0.8;">Model AI:</span>
+        <span class="font-mono text-warning" id="side-model-type">yolov8n.pt</span>
       </div>
       <div class="d-flex justify-content-between">
-        <span class="text-muted">Thread BLAS:</span>
-        <span class="font-mono text-warning">1 (NPROC Safe)</span>
+        <span class="text-white" style="opacity: 0.8;">Thread BLAS:</span>
+        <span class="font-mono text-success">1 (NPROC Safe)</span>
       </div>
     </div>
 
     <!-- Footer -->
     <div class="sidebar-footer d-flex justify-content-between align-items-center">
-      <span>&copy; 2026 Ikhsan Wahyudi</span>
-      <span class="font-mono" id="clock-sidebar">--:--:--</span>
+      <span class="text-white small">&copy; 2026 Ikhsan Wahyudi</span>
+      <span class="font-mono text-info fw-bold" id="clock-sidebar">--:--:--</span>
     </div>
   </aside>
 
@@ -450,12 +488,12 @@
     <!-- Top Navbar -->
     <header class="top-navbar d-flex align-items-center justify-content-between">
       <div class="d-flex align-items-center gap-3">
-        <button class="btn btn-sm btn-light border d-lg-none" type="button" onclick="toggleSidebar()">
-          <i class="bi bi-list fs-5"></i>
+        <button class="btn btn-sm btn-outline-secondary d-lg-none" type="button" onclick="toggleSidebar()">
+          <i class="bi bi-list fs-5 text-white"></i>
         </button>
         <div>
-          <h6 class="mb-0 fw-bold text-dark">Dashboard Sistem Kendali Lampu Pintar</h6>
-          <div class="small text-muted font-mono" style="font-size: 0.72rem;">
+          <h6 class="mb-0 fw-bold text-white">Dashboard Sistem Kendali Lampu Pintar</h6>
+          <div class="small font-mono text-info" style="font-size: 0.74rem;">
             Implementasi YOLOv8 &bull; ESP32-S3-CAM &bull; Subdomain: ikhsan.mhsfikom.my.id
           </div>
         </div>
@@ -467,7 +505,7 @@
           <span>Peladen Cloud Aktif</span>
         </span>
 
-        <button class="btn btn-sm btn-outline-secondary" onclick="fetchStatus(); loadLogsTable();" title="Segarkan Data">
+        <button class="btn btn-sm btn-outline-secondary text-white" onclick="fetchStatus(); loadLogsTable();" title="Segarkan Data">
           <i class="bi bi-arrow-clockwise"></i> <span class="d-none d-sm-inline">Refresh</span>
         </button>
 
@@ -494,12 +532,12 @@
                 <i class="bi bi-lightbulb-fill"></i>
               </div>
               <div>
-                <div class="small text-muted fw-semibold">STATUS RELAY LAMPU</div>
+                <div class="small text-white fw-semibold" style="opacity: 0.85;">STATUS RELAY LAMPU</div>
                 <div class="d-flex align-items-center gap-2 mt-1">
-                  <span class="fs-4 fw-bold" id="kpi-relay-text">RELAY OFF</span>
+                  <span class="fs-4 fw-bold text-white" id="kpi-relay-text">RELAY OFF</span>
                   <span class="lamp-glow-box lamp-glow-off" id="kpi-lamp-dot"></span>
                 </div>
-                <div class="small text-muted font-mono mt-1" style="font-size: 0.72rem;" id="kpi-relay-pin">GPIO 14 (Active LOW)</div>
+                <div class="small font-mono text-info mt-1" style="font-size: 0.76rem;" id="kpi-relay-pin">GPIO 14 (Active LOW)</div>
               </div>
             </div>
           </div>
@@ -507,13 +545,13 @@
           <!-- Card 2: Kategori Objek Terakhir -->
           <div class="col-xl-3 col-md-6">
             <div class="kpi-card">
-              <div class="kpi-icon-box" style="background: #e0f2fe; color: #0284c7;">
+              <div class="kpi-icon-box" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
                 <i class="bi bi-person-bounding-box"></i>
               </div>
               <div>
-                <div class="small text-muted fw-semibold">KATEGORI TERAKHIR</div>
-                <div class="fs-4 fw-bold text-dark mt-1 text-uppercase" id="kpi-category">-</div>
-                <div class="small text-muted font-mono mt-1" style="font-size: 0.72rem;" id="kpi-classes">Menunggu input citra</div>
+                <div class="small text-white fw-semibold" style="opacity: 0.85;">KATEGORI TERAKHIR</div>
+                <div class="fs-4 fw-bold text-info mt-1 text-uppercase" id="kpi-category">-</div>
+                <div class="small text-white font-mono mt-1" style="font-size: 0.76rem; opacity: 0.8;" id="kpi-classes">Menunggu input citra</div>
               </div>
             </div>
           </div>
@@ -521,13 +559,13 @@
           <!-- Card 3: Confidence Score -->
           <div class="col-xl-3 col-md-6">
             <div class="kpi-card">
-              <div class="kpi-icon-box" style="background: #ecfdf5; color: #10b981;">
+              <div class="kpi-icon-box" style="background: rgba(52, 211, 153, 0.15); color: #34d399;">
                 <i class="bi bi-shield-check"></i>
               </div>
               <div class="w-100">
-                <div class="small text-muted fw-semibold">TINGKAT KEPERCAYAAN</div>
-                <div class="fs-4 fw-bold text-dark mt-1" id="kpi-confidence">0.0%</div>
-                <div class="progress mt-2" style="height: 5px;">
+                <div class="small text-white fw-semibold" style="opacity: 0.85;">TINGKAT KEPERCAYAAN</div>
+                <div class="fs-4 fw-bold text-success mt-1" id="kpi-confidence">0.0%</div>
+                <div class="progress mt-2" style="height: 6px; background-color: #1e293b;">
                   <div class="progress-bar bg-success" id="kpi-confidence-bar" style="width: 0%"></div>
                 </div>
               </div>
@@ -537,13 +575,13 @@
           <!-- Card 4: Waktu Inferensi AI -->
           <div class="col-xl-3 col-md-6">
             <div class="kpi-card">
-              <div class="kpi-icon-box" style="background: #fffbeb; color: #f59e0b;">
+              <div class="kpi-icon-box" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24;">
                 <i class="bi bi-stopwatch-fill"></i>
               </div>
               <div>
-                <div class="small text-muted fw-semibold">WAKTU INFERENSI</div>
-                <div class="fs-4 fw-bold text-dark mt-1" id="kpi-inference-time">0.0 ms</div>
-                <div class="small text-muted font-mono mt-1" style="font-size: 0.72rem;" id="kpi-total-tests">Total Uji: 0 kali</div>
+                <div class="small text-white fw-semibold" style="opacity: 0.85;">WAKTU INFERENSI</div>
+                <div class="fs-4 fw-bold text-warning mt-1" id="kpi-inference-time">0.0 ms</div>
+                <div class="small text-white font-mono mt-1" style="font-size: 0.76rem; opacity: 0.8;" id="kpi-total-tests">Total Uji: 0 kali</div>
               </div>
             </div>
           </div>
@@ -562,32 +600,32 @@
             <div class="admin-card h-100">
               <div class="card-header-clean">
                 <h6 class="card-title-clean">
-                  <i class="bi bi-camera-video-fill text-primary"></i>
+                  <i class="bi bi-camera-video-fill text-info"></i>
                   <span>Pratinjau Citra Deteksi Terakhir</span>
                 </h6>
                 <div class="d-flex align-items-center gap-2">
-                  <span class="badge bg-secondary-subtle text-secondary font-mono" id="detect-time-stamp">--:--:--</span>
-                  <button class="btn btn-sm btn-light border" onclick="refreshImageManual()" title="Refresh Gambar">
+                  <span class="badge bg-secondary-subtle text-light font-mono" id="detect-time-stamp">--:--:--</span>
+                  <button class="btn btn-sm btn-outline-secondary text-white" onclick="refreshImageManual()" title="Refresh Gambar">
                     <i class="bi bi-arrow-repeat"></i>
                   </button>
                 </div>
               </div>
               
               <div class="p-3 text-center bg-black position-relative" style="min-height: 380px; display: flex; align-items: center; justify-content: center;">
-                <img id="live-detection-img" src="/static/latest_detection.jpg" alt="Deteksi Terakhir" class="img-fluid rounded" style="max-height: 400px; object-fit: contain;" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'640\' height=\'480\' fill=\'%230f172a\'><rect width=\'100%25\' height=\'100%25\'/><text x=\'50%25\' y=\'50%25\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%2364748b\' font-size=\'18\' font-family=\'sans-serif\'>Belum ada citra yang dikirim ke server</text></svg>';">
+                <img id="live-detection-img" src="/static/latest_detection.jpg" alt="Deteksi Terakhir" class="img-fluid rounded" style="max-height: 400px; object-fit: contain;" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'640\' height=\'480\' fill=\'%23080c16\'><rect width=\'100%25\' height=\'100%25\'/><text x=\'50%25\' y=\'50%25\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23cbd5e1\' font-size=\'18\' font-family=\'sans-serif\'>Belum ada citra yang dikirim ke server</text></svg>';">
                 
                 <!-- Overlay pill info -->
-                <div class="position-absolute bottom-0 start-0 m-3 p-2 rounded bg-dark bg-opacity-75 text-white small font-mono border border-secondary" style="font-size: 0.75rem;">
+                <div class="position-absolute bottom-0 start-0 m-3 p-2 rounded bg-dark bg-opacity-75 text-white small font-mono border border-secondary" style="font-size: 0.78rem;">
                   <span id="img-overlay-name">File: -</span> &bull; 
-                  <span id="img-overlay-action" class="badge bg-secondary">OFF</span>
+                  <span id="img-overlay-action" class="badge bg-secondary text-white">OFF</span>
                 </div>
               </div>
 
-              <div class="p-3 bg-light border-top small text-muted d-flex justify-content-between align-items-center">
+              <div class="p-3 bg-dark bg-opacity-50 border-top border-secondary border-opacity-25 small text-white d-flex justify-content-between align-items-center">
                 <div>
-                  <i class="bi bi-info-circle me-1"></i> Resolusi kamera standar: <strong>VGA 640x480 JPEG</strong>
+                  <i class="bi bi-info-circle text-info me-1"></i> Resolusi kamera standar: <strong class="text-white">VGA 640x480 JPEG</strong>
                 </div>
-                <div class="font-mono" id="img-overlay-conf">Ambang Batas Conf: &ge; 0.50</div>
+                <div class="font-mono text-warning" id="img-overlay-conf">Ambang Batas Conf: &ge; 0.50</div>
               </div>
             </div>
           </div>
@@ -604,41 +642,41 @@
               
               <div class="p-4">
                 <div class="mb-3">
-                  <label class="small text-muted fw-semibold d-block mb-1">Keputusan Akhir Beban Listrik:</label>
-                  <div class="p-3 rounded border text-center" id="decision-box" style="background: #f8fafc;">
-                    <h3 class="fw-bold mb-1" id="decision-title">RELAY OFF</h3>
-                    <p class="small text-muted mb-0" id="decision-desc">Menunggu deteksi gerakan berikutnya dari sensor PIR.</p>
+                  <label class="small text-white fw-semibold d-block mb-1">Keputusan Akhir Beban Listrik:</label>
+                  <div class="p-3 rounded border text-center" id="decision-box" style="background: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.15) !important;">
+                    <h3 class="fw-bold mb-1 text-white" id="decision-title">RELAY OFF</h3>
+                    <p class="small text-white mb-0" style="opacity: 0.85;" id="decision-desc">Menunggu deteksi gerakan berikutnya dari sensor PIR.</p>
                   </div>
                 </div>
 
                 <div class="mb-3">
-                  <label class="small text-muted fw-semibold d-block mb-1">Daftar Objek Terdeteksi AI:</label>
-                  <div class="p-2 rounded bg-light border font-mono small" id="detected-objects-list" style="min-height: 60px;">
-                    <span class="text-muted">Tidak ada objek teridentifikasi.</span>
+                  <label class="small text-white fw-semibold d-block mb-1">Daftar Objek Terdeteksi AI:</label>
+                  <div class="p-3 rounded bg-dark bg-opacity-50 border border-secondary border-opacity-25 font-mono small" id="detected-objects-list" style="min-height: 60px;">
+                    <span class="text-white" style="opacity: 0.7;">Tidak ada objek teridentifikasi.</span>
                   </div>
                 </div>
 
                 <div class="mb-3">
-                  <label class="small text-muted fw-semibold d-block mb-1">Parameter Waktu &amp; Auto-Extend:</label>
-                  <div class="p-3 rounded bg-light border font-mono" style="font-size: 0.8rem;">
-                    <div class="d-flex justify-content-between mb-1">
-                      <span class="text-muted">Durasi Dasar Nyala:</span>
-                      <span class="fw-bold text-dark">10.000 ms (10 Detik)</span>
+                  <label class="small text-white fw-semibold d-block mb-1">Parameter Waktu &amp; Auto-Extend:</label>
+                  <div class="p-3 rounded bg-dark bg-opacity-50 border border-secondary border-opacity-25 font-mono" style="font-size: 0.82rem;">
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="text-white" style="opacity: 0.8;">Durasi Dasar Nyala:</span>
+                      <span class="fw-bold text-info">10.000 ms (10 Detik)</span>
                     </div>
-                    <div class="d-flex justify-content-between mb-1">
-                      <span class="text-muted">Jeda Stabilisasi Flash:</span>
-                      <span class="fw-bold text-dark">500 ms</span>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="text-white" style="opacity: 0.8;">Jeda Stabilisasi Flash:</span>
+                      <span class="fw-bold text-warning">500 ms</span>
                     </div>
                     <div class="d-flex justify-content-between">
-                      <span class="text-muted">Waktu Tenang (Cooldown):</span>
-                      <span class="fw-bold text-dark">3.000 ms</span>
+                      <span class="text-white" style="opacity: 0.8;">Waktu Tenang (Cooldown):</span>
+                      <span class="fw-bold text-white">3.000 ms</span>
                     </div>
                   </div>
                 </div>
 
-                <div class="p-2 rounded bg-info-subtle border border-info-subtle small text-secondary">
+                <div class="p-3 rounded bg-primary-subtle border border-primary-subtle small text-white">
                   <i class="bi bi-lightbulb-fill text-warning me-1"></i>
-                  <strong>Aturan Matriks Skripsi:</strong> Lampu menyala HANYA jika terdeteksi kelas <code>manusia</code>, <code>mobil</code>, atau <code>motor</code>. Kelas hewan dibiarkan padam.
+                  <strong class="text-info">Aturan Matriks Skripsi:</strong> Lampu menyala HANYA jika terdeteksi kelas <code>manusia</code>, <code>mobil</code>, atau <code>motor</code>. Kelas hewan dibiarkan padam.
                 </div>
               </div>
             </div>
@@ -664,11 +702,11 @@
             <div class="row g-4">
               <!-- Upload Custom Image -->
               <div class="col-md-6">
-                <label class="fw-bold text-dark mb-2">Uji Foto Kustom Anda (Drag &amp; Drop):</label>
+                <label class="fw-bold text-white mb-2 fs-6">Uji Foto Kustom Anda (Drag &amp; Drop):</label>
                 <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-                  <i class="bi bi-cloud-arrow-up text-primary fs-1 d-block mb-2"></i>
-                  <div class="fw-semibold text-dark">Klik atau Seret Berkas Gambar ke Sini</div>
-                  <div class="small text-muted">Mendukung format JPG, JPEG, PNG (Maksimal 5 MB)</div>
+                  <i class="bi bi-cloud-arrow-up text-info fs-1 d-block mb-2"></i>
+                  <div class="fw-bold text-white fs-6">Klik atau Seret Berkas Gambar ke Sini</div>
+                  <div class="small text-white mt-1" style="opacity: 0.8;">Mendukung format JPG, JPEG, PNG (Maksimal 5 MB)</div>
                   <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileUpload(this.files[0])">
                 </div>
                 <div id="uploadStatus" class="mt-2 small font-mono"></div>
@@ -676,32 +714,32 @@
 
               <!-- One-Click Sample Test Buttons -->
               <div class="col-md-6">
-                <label class="fw-bold text-dark mb-2">Uji Cepat Sampel Foto Matriks Bab V:</label>
-                <p class="small text-muted mb-3">Klik tombol di bawah untuk menguji respons server dan logika relay secara seketika:</p>
+                <label class="fw-bold text-white mb-2 fs-6">Uji Cepat Sampel Foto Matriks Bab V:</label>
+                <p class="small text-white mb-3" style="opacity: 0.85;">Klik tombol di bawah untuk menguji respons server dan logika relay secara seketika:</p>
 
                 <div class="d-grid gap-2">
-                  <button class="btn btn-outline-success text-start p-3 d-flex align-items-center justify-content-between" onclick="runSampleTest('uji_manusia.jpg', this)">
+                  <button class="btn btn-outline-success text-start p-3 d-flex align-items-center justify-content-between text-white" onclick="runSampleTest('uji_manusia.jpg', this)">
                     <div>
-                      <div class="fw-bold"><i class="bi bi-person-fill text-success me-2"></i>Sampel SK-02: Manusia</div>
-                      <div class="small text-muted">Ekspektasi: Kategori Manusia &rarr; RELAY ON</div>
+                      <div class="fw-bold text-success"><i class="bi bi-person-fill text-success me-2"></i>Sampel SK-02: Manusia</div>
+                      <div class="small text-white" style="opacity: 0.85;">Ekspektasi: Kategori Manusia &rarr; RELAY ON</div>
                     </div>
                     <i class="bi bi-play-circle fs-4 text-success"></i>
                   </button>
 
-                  <button class="btn btn-outline-warning text-start p-3 d-flex align-items-center justify-content-between" onclick="runSampleTest('uji_kucing.jpg', this)">
+                  <button class="btn btn-outline-warning text-start p-3 d-flex align-items-center justify-content-between text-white" onclick="runSampleTest('uji_kucing.jpg', this)">
                     <div>
-                      <div class="fw-bold"><i class="bi bi-emoji-smile text-warning me-2"></i>Sampel SK-05: Kucing (Hewan)</div>
-                      <div class="small text-muted">Ekspektasi: Kategori Hewan &rarr; RELAY OFF (Lampu Tetap Padam)</div>
+                      <div class="fw-bold text-warning"><i class="bi bi-emoji-smile text-warning me-2"></i>Sampel SK-05: Kucing (Hewan)</div>
+                      <div class="small text-white" style="opacity: 0.85;">Ekspektasi: Kategori Hewan &rarr; RELAY OFF (Lampu Tetap Padam)</div>
                     </div>
                     <i class="bi bi-play-circle fs-4 text-warning"></i>
                   </button>
 
-                  <button class="btn btn-outline-primary text-start p-3 d-flex align-items-center justify-content-between" onclick="runSampleTest('uji_manusia_bus.jpg', this)">
+                  <button class="btn btn-outline-info text-start p-3 d-flex align-items-center justify-content-between text-white" onclick="runSampleTest('uji_manusia_bus.jpg', this)">
                     <div>
-                      <div class="fw-bold"><i class="bi bi-truck text-primary me-2"></i>Sampel SK-08: Multi-Objek (Manusia + Bus)</div>
-                      <div class="small text-muted">Ekspektasi: Terdeteksi Manusia &rarr; RELAY ON</div>
+                      <div class="fw-bold text-info"><i class="bi bi-truck text-info me-2"></i>Sampel SK-08: Multi-Objek (Manusia + Bus)</div>
+                      <div class="small text-white" style="opacity: 0.85;">Ekspektasi: Terdeteksi Manusia &rarr; RELAY ON</div>
                     </div>
-                    <i class="bi bi-play-circle fs-4 text-primary"></i>
+                    <i class="bi bi-play-circle fs-4 text-info"></i>
                   </button>
                 </div>
               </div>
@@ -720,7 +758,7 @@
             <div class="admin-card h-100">
               <div class="card-header-clean">
                 <h6 class="card-title-clean">
-                  <i class="bi bi-pie-chart-fill text-primary"></i>
+                  <i class="bi bi-pie-chart-fill text-info"></i>
                   <span>Distribusi Kategori Objek Terdeteksi</span>
                 </h6>
               </div>
@@ -758,7 +796,7 @@
                 <i class="bi bi-journal-text text-info"></i>
                 <span>Rekapitulasi Data Log Pengujian (CSV)</span>
               </h6>
-              <div class="small text-muted">Data persisten acuan pembuatan tabel dan grafik Bab V Skripsi.</div>
+              <div class="small text-white" style="opacity: 0.85;">Data persisten acuan pembuatan tabel dan grafik Bab V Skripsi.</div>
             </div>
 
             <div class="d-flex align-items-center gap-2">
@@ -788,15 +826,15 @@
               </thead>
               <tbody id="logsTableBody">
                 <tr>
-                  <td colspan="8" class="text-center py-4 text-muted">Memuat data log pengujian...</td>
+                  <td colspan="8" class="text-center py-4 text-white" style="opacity: 0.7;">Memuat data log pengujian...</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div class="p-3 bg-light border-top d-flex justify-content-between align-items-center small text-muted">
+          <div class="p-3 bg-dark bg-opacity-50 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center small text-white">
             <span id="logCountLabel">Menampilkan 0 data pengujian</span>
-            <span class="font-mono">Auto-refresh setiap 3 detik</span>
+            <span class="font-mono text-info">Auto-refresh setiap 3 detik</span>
           </div>
         </div>
       </section>
@@ -808,7 +846,7 @@
         <div class="admin-card">
           <div class="card-header-clean">
             <h6 class="card-title-clean">
-              <i class="bi bi-cpu-fill text-primary"></i>
+              <i class="bi bi-cpu-fill text-info"></i>
               <span>Spesifikasi Hardware &amp; Arsitektur Cloud</span>
             </h6>
           </div>
@@ -816,27 +854,27 @@
           <div class="p-4">
             <div class="row g-4">
               <div class="col-md-6">
-                <h6 class="fw-bold text-dark mb-3">Konfigurasi Pinout ESP32-S3:</h6>
-                <table class="table table-sm table-bordered font-mono small">
-                  <thead class="table-light">
-                    <tr><th>Komponen</th><th>Pin GPIO</th><th>Fungsi Teknis</th></tr>
+                <h6 class="fw-bold text-white mb-3">Konfigurasi Pinout ESP32-S3:</h6>
+                <table class="table table-sm table-bordered font-mono small" style="border-color: rgba(255, 255, 255, 0.15);">
+                  <thead class="table-dark">
+                    <tr><th class="text-info">Komponen</th><th class="text-info">Pin GPIO</th><th class="text-info">Fungsi Teknis</th></tr>
                   </thead>
                   <tbody>
-                    <tr><td>Relay 5V</td><td>GPIO 14</td><td>Kendali Lampu 12V (Active LOW)</td></tr>
-                    <tr><td>Sensor PIR</td><td>GPIO 21</td><td>Input Pemicu Gerak (Bebas clock kamera)</td></tr>
-                    <tr><td>Kamera OV2640</td><td>GPIO 11, 12, 13, dll.</td><td>Transmisi Citra VGA via DVP</td></tr>
-                    <tr><td>Regulator LM2596</td><td>VCC / GND</td><td>Suplai 5.0V Stabil</td></tr>
+                    <tr><td>Relay 5V</td><td class="text-success fw-bold">GPIO 14</td><td>Kendali Lampu 12V (Active LOW)</td></tr>
+                    <tr><td>Sensor PIR</td><td class="text-warning fw-bold">GPIO 21</td><td>Input Pemicu Gerak (Bebas clock kamera)</td></tr>
+                    <tr><td>Kamera OV2640</td><td class="text-white">GPIO 11, 12, 13, dll.</td><td>Transmisi Citra VGA via DVP</td></tr>
+                    <tr><td>Regulator LM2596</td><td class="text-white">VCC / GND</td><td>Suplai 5.0V Stabil</td></tr>
                   </tbody>
                 </table>
               </div>
 
               <div class="col-md-6">
-                <h6 class="fw-bold text-dark mb-3">Endpoint API Produksi (cPanel Hosting):</h6>
-                <div class="p-3 bg-light rounded border font-mono small">
-                  <div class="mb-2"><strong>Web Dashboard:</strong> <a href="https://ikhsan.mhsfikom.my.id" target="_blank" class="text-primary">https://ikhsan.mhsfikom.my.id</a></div>
-                  <div class="mb-2"><strong>Deteksi POST:</strong> <span class="text-success">https://ikhsan.mhsfikom.my.id/api/detect</span></div>
-                  <div class="mb-2"><strong>Status GET:</strong> <span class="text-info">https://ikhsan.mhsfikom.my.id/api/status</span></div>
-                  <div><strong>Health Check:</strong> <span class="text-warning">https://ikhsan.mhsfikom.my.id/api/health</span></div>
+                <h6 class="fw-bold text-white mb-3">Endpoint API Produksi (cPanel Hosting):</h6>
+                <div class="p-3 bg-dark bg-opacity-50 rounded border border-secondary border-opacity-25 font-mono small">
+                  <div class="mb-2"><strong class="text-white">Web Dashboard:</strong> <a href="https://ikhsan.mhsfikom.my.id" target="_blank" class="text-info fw-bold">https://ikhsan.mhsfikom.my.id</a></div>
+                  <div class="mb-2"><strong class="text-white">Deteksi POST:</strong> <span class="text-success fw-bold">https://ikhsan.mhsfikom.my.id/api/detect</span></div>
+                  <div class="mb-2"><strong class="text-white">Status GET:</strong> <span class="text-info fw-bold">https://ikhsan.mhsfikom.my.id/api/status</span></div>
+                  <div><strong class="text-white">Health Check:</strong> <span class="text-warning fw-bold">https://ikhsan.mhsfikom.my.id/api/health</span></div>
                 </div>
               </div>
             </div>
@@ -847,7 +885,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="p-3 bg-white border-top text-center text-muted small mt-auto">
+    <footer class="p-3 bg-dark border-top border-secondary border-opacity-25 text-center text-white small mt-auto" style="opacity: 0.85;">
       Sistem Kendali Lampu Pintar Menggunakan Deep Learning (YOLOv8) &bull; Ikhsan Wahyudi (235520110043) &bull; S1 Informatika Universitas Almuslim &bull; 2026
     </footer>
   </div>
@@ -908,14 +946,17 @@
               data: [1, 0, 0, 0],
               backgroundColor: ['#10b981', '#f59e0b', '#0284c7', '#94a3b8'],
               borderWidth: 2,
-              borderColor: '#ffffff'
+              borderColor: '#111827'
             }]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { position: 'bottom' }
+              legend: { 
+                position: 'bottom',
+                labels: { color: '#e2e8f0', font: { size: 12 } }
+              }
             }
           }
         });
@@ -937,7 +978,21 @@
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-              y: { beginAtZero: true, title: { display: true, text: 'Milidetik (ms)' } }
+              x: {
+                ticks: { color: '#cbd5e1' },
+                grid: { color: 'rgba(255, 255, 255, 0.06)' }
+              },
+              y: { 
+                beginAtZero: true, 
+                title: { display: true, text: 'Milidetik (ms)', color: '#93c5fd' },
+                ticks: { color: '#cbd5e1' },
+                grid: { color: 'rgba(255, 255, 255, 0.06)' }
+              }
+            },
+            plugins: {
+              legend: {
+                labels: { color: '#e2e8f0' }
+              }
             }
           }
         });
@@ -962,20 +1017,22 @@
 
         if (isRelayOn) {
           kpiRelayText.textContent = 'RELAY ON';
+          kpiRelayText.className = 'fs-4 fw-bold text-success';
           kpiRelayIcon.className = 'kpi-icon-box kpi-relay-on';
           kpiLampDot.className = 'lamp-glow-box lamp-glow-on';
-          decisionBox.style.background = '#ecfdf5';
+          decisionBox.style.background = 'rgba(16, 185, 129, 0.12)';
           decisionBox.style.borderColor = '#10b981';
           decisionTitle.className = 'fw-bold mb-1 text-success';
           decisionTitle.textContent = 'RELAY ON (LAMPU MENYALA)';
           decisionDesc.textContent = 'Terdeteksi objek prioritas (' + (data.category || '').toUpperCase() + '). Lampu aktif 10 detik.';
         } else {
           kpiRelayText.textContent = 'RELAY OFF';
+          kpiRelayText.className = 'fs-4 fw-bold text-white';
           kpiRelayIcon.className = 'kpi-icon-box kpi-relay-off';
           kpiLampDot.className = 'lamp-glow-box lamp-glow-off';
-          decisionBox.style.background = '#f8fafc';
-          decisionBox.style.borderColor = '#e2e8f0';
-          decisionTitle.className = 'fw-bold mb-1 text-secondary';
+          decisionBox.style.background = 'rgba(255, 255, 255, 0.03)';
+          decisionBox.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+          decisionTitle.className = 'fw-bold mb-1 text-white';
           decisionTitle.textContent = 'RELAY OFF (LAMPU PADAM)';
           decisionDesc.textContent = 'Tidak terdeteksi manusia/kendaraan. Lampu tetap padam untuk efisiensi listrik.';
         }
@@ -997,13 +1054,13 @@
           objListEl.innerHTML = data.detected_classes.map(c => `<span class="badge bg-primary me-1">${c}</span>`).join('');
         } else {
           classEl.textContent = 'Tidak ada objek';
-          objListEl.innerHTML = '<span class="text-muted">Tidak ada objek teridentifikasi.</span>';
+          objListEl.innerHTML = '<span class="text-white" style="opacity: 0.7;">Tidak ada objek teridentifikasi.</span>';
         }
 
         // Image overlay
         document.getElementById('img-overlay-name').textContent = 'File: ' + (data.file_name || '-');
         const actionBadge = document.getElementById('img-overlay-action');
-        actionBadge.className = isRelayOn ? 'badge bg-success' : 'badge bg-secondary';
+        actionBadge.className = isRelayOn ? 'badge bg-success' : 'badge bg-secondary text-white';
         actionBadge.textContent = data.lamp_action || 'OFF';
         document.getElementById('detect-time-stamp').textContent = data.timestamp || '--:--:--';
 
@@ -1036,7 +1093,7 @@
         if (countLabel) countLabel.textContent = `Menampilkan ${logs.length} data pengujian`;
 
         if (!logs || logs.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted">Belum ada riwayat pengujian. Silakan lakukan deteksi melalui ESP32 atau Test Lab.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-white" style="opacity: 0.7;">Belum ada riwayat pengujian. Silakan lakukan deteksi melalui ESP32 atau Test Lab.</td></tr>';
           return;
         }
 
@@ -1045,23 +1102,23 @@
           const isON = (row.Status_Lampu_Keputusan === 'ON' || row.lamp_action === 'ON');
           const statusBadge = isON 
             ? '<span class="badge bg-success">RELAY ON</span>' 
-            : '<span class="badge bg-secondary">RELAY OFF</span>';
+            : '<span class="badge bg-secondary text-white">RELAY OFF</span>';
           
           const cat = row.Kategori || row.category || '-';
-          let catBadge = '<span class="badge bg-secondary">' + cat + '</span>';
+          let catBadge = '<span class="badge bg-secondary text-white">' + cat + '</span>';
           if (cat === 'manusia') catBadge = '<span class="badge bg-success">' + cat + '</span>';
-          else if (cat === 'hewan') catBadge = '<span class="badge bg-warning text-dark">' + cat + '</span>';
+          else if (cat === 'hewan') catBadge = '<span class="badge bg-warning text-dark fw-bold">' + cat + '</span>';
           else if (cat === 'kendaraan') catBadge = '<span class="badge bg-primary">' + cat + '</span>';
 
           return `
             <tr>
-              <td class="font-mono text-muted">${idx + 1}</td>
-              <td class="font-mono">${row.Timestamp || row.timestamp || '-'}</td>
-              <td class="font-mono small text-truncate" style="max-width: 140px;">${row.Nama_File || row.file_name || '-'}</td>
+              <td class="font-mono text-info fw-bold">${idx + 1}</td>
+              <td class="font-mono text-white">${row.Timestamp || row.timestamp || '-'}</td>
+              <td class="font-mono small text-truncate text-white" style="max-width: 140px;">${row.Nama_File || row.file_name || '-'}</td>
               <td>${catBadge}</td>
-              <td class="font-mono">${row.Kelas_Terdeteksi || row.detected_classes || '-'}</td>
-              <td class="font-mono">${row.Confidence || row.confidence || '0.0'}</td>
-              <td class="font-mono">${row.Waktu_Inferensi_ms || row.inference_time_ms || '0'} ms</td>
+              <td class="font-mono text-white">${row.Kelas_Terdeteksi || row.detected_classes || '-'}</td>
+              <td class="font-mono text-warning">${row.Confidence || row.confidence || '0.0'}</td>
+              <td class="font-mono text-info">${row.Waktu_Inferensi_ms || row.inference_time_ms || '0'} ms</td>
               <td>${statusBadge}</td>
             </tr>
           `;
@@ -1171,7 +1228,7 @@
     async function handleFileUpload(file) {
       if (!file) return;
       const statusEl = document.getElementById('uploadStatus');
-      statusEl.innerHTML = '<span class="text-primary"><i class="bi bi-hourglass-split"></i> Mengunggah & menganalisis citra...</span>';
+      statusEl.innerHTML = '<span class="text-info"><i class="bi bi-hourglass-split"></i> Mengunggah & menganalisis citra...</span>';
 
       const formData = new FormData();
       formData.append('image', file);

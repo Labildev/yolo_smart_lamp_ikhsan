@@ -429,9 +429,13 @@
         <i class="bi bi-grid-1x2-fill"></i>
         <span>Overview &amp; Live Feed</span>
       </a>
+      <a href="#webcam-lab" onclick="handleNavClick(this)">
+        <i class="bi bi-camera-video-fill text-info"></i>
+        <span>Uji Kamera Laptop (Webcam)</span>
+      </a>
       <a href="#test-lab" onclick="handleNavClick(this)">
-        <i class="bi bi-flask-fill"></i>
-        <span>Test Lab &amp; Simulator</span>
+        <i class="bi bi-flask-fill text-warning"></i>
+        <span>Test Lab &amp; Sampel Foto</span>
       </a>
       <a href="#analisis" onclick="handleNavClick(this)">
         <i class="bi bi-graph-up"></i>
@@ -686,16 +690,115 @@
       </section>
 
       <!-- =====================================================================
-           SECTION 3: TEST LAB & SIMULATOR MANDIRI
+           SECTION 3: TEST LAB & WEBCAM SIMULATOR
+           ===================================================================== -->
+      <section id="webcam-lab" class="content-section mb-4">
+        <!-- Kartu 1: Kamera Laptop Real-Time (Webcam Simulator) -->
+        <div class="admin-card mb-4" id="webcam-card">
+          <div class="card-header-clean">
+            <h6 class="card-title-clean">
+              <i class="bi bi-camera-video text-info fs-5"></i>
+              <span>Uji Langsung Menggunakan Kamera Laptop (Webcam Real-Time)</span>
+            </h6>
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge bg-info-subtle text-info border border-info-subtle">
+                <i class="bi bi-laptop me-1"></i> Pengujian Mandiri
+              </span>
+            </div>
+          </div>
+
+          <div class="p-4">
+            <div class="row g-4 align-items-center">
+              
+              <!-- Video Viewport -->
+              <div class="col-lg-7">
+                <div class="position-relative rounded-3 overflow-hidden bg-black text-center" style="min-height: 340px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color);">
+                  
+                  <!-- Video element for live browser stream -->
+                  <video id="webcamVideo" autoplay playsinline muted class="w-100" style="display: none; max-height: 360px; object-fit: contain; transform: scaleX(-1);"></video>
+                  
+                  <!-- Fallback placeholder when camera is not yet started -->
+                  <div id="webcamPlaceholder" class="p-4 text-center">
+                    <i class="bi bi-camera-video-off text-muted fs-1 d-block mb-3"></i>
+                    <h6 class="text-white fw-bold mb-2">Kamera Laptop Belum Diaktifkan</h6>
+                    <p class="small text-muted mb-3" style="max-width: 440px; margin: 0 auto; line-height: 1.6;">
+                      Klik tombol <strong>"Buka Kamera Laptop"</strong> di bawah untuk menyalakan webcam. Anda dapat menjepret frame untuk menguji respons deteksi AI secara langsung tanpa mikrokontroler fisik.
+                    </p>
+                    <button class="btn btn-glow-primary px-4 py-2" onclick="startWebcam()">
+                      <i class="bi bi-play-circle-fill"></i> Buka Kamera Laptop
+                    </button>
+                  </div>
+
+                  <!-- Flash Simulation Overlay Effect (500ms white blink) -->
+                  <div id="flashOverlay" style="display: none; position: absolute; inset: 0; background: #ffffff; z-index: 10; opacity: 0.95; transition: opacity 0.4s ease; pointer-events: none;"></div>
+
+                  <!-- Active Scanning Badge -->
+                  <div id="scanIndicator" class="position-absolute top-0 start-0 m-3 px-3 py-1 rounded-pill bg-dark bg-opacity-75 text-info small font-mono border border-info" style="display: none; font-size: 0.75rem;">
+                    <span class="spinner-grow spinner-grow-sm text-info me-1"></span>
+                    <span id="scanIndicatorText">SCAN PIR REAL-TIME</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Control Panel & Result Pill -->
+              <div class="col-lg-5">
+                <div class="p-3 rounded bg-dark bg-opacity-50 border border-secondary border-opacity-25 h-100 d-flex flex-column justify-content-between">
+                  <div>
+                    <h6 class="fw-bold text-white mb-2">Panel Kendali Kamera &amp; Pemicu PIR:</h6>
+                    <p class="small text-muted mb-3">
+                      Simulasikan pemicu gerakan fisik sensor PIR menggunakan frame langsung dari webcam laptop Anda.
+                    </p>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2 mb-3">
+                      <button id="btnCapture" class="btn btn-primary fw-bold py-2" onclick="captureWebcamFrame(true)" disabled>
+                        <i class="bi bi-camera-fill me-1"></i> Jepret &amp; Deteksi (PIR Trigger)
+                      </button>
+
+                      <button id="btnAutoScan" class="btn btn-outline-warning fw-semibold py-2" onclick="toggleAutoScan()" disabled>
+                        <i class="bi bi-repeat me-1"></i> Mulai Scan Otomatis (Tiap 2 Detik)
+                      </button>
+
+                      <button id="btnStopCam" class="btn btn-outline-danger btn-sm py-2" onclick="stopWebcam()" style="display: none;">
+                        <i class="bi bi-stop-circle me-1"></i> Matikan Kamera Laptop
+                      </button>
+                    </div>
+
+                    <!-- Keyboard Shortcut Hint -->
+                    <div class="p-2 rounded bg-black bg-opacity-50 border border-secondary border-opacity-25 small font-mono text-muted text-center mb-3" style="font-size: 0.76rem;">
+                      <i class="bi bi-keyboard text-info me-1"></i> Pintasan: Tekan tombol <kbd class="bg-secondary text-white">SPASI</kbd> untuk menjepret saat kamera aktif.
+                    </div>
+                  </div>
+
+                  <!-- Last Webcam Result Banner -->
+                  <div id="webcamResultBanner" class="p-3 rounded border" style="background: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.15) !important;">
+                    <div class="small text-muted font-mono mb-1">HASIL DETEKSI WEBCAM TERAKHIR:</div>
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span class="fw-bold fs-6 text-white" id="webcamResultCategory">-</span>
+                      <span class="badge bg-secondary" id="webcamResultRelay">STANDBY</span>
+                    </div>
+                    <div class="small text-muted font-mono mt-1" id="webcamResultMetrics">Confidence: - &bull; Waktu: - ms</div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           SECTION 4: TEST LAB FOTO KUSTOM & SAMPEL MATRIKS
            ===================================================================== -->
       <section id="test-lab" class="content-section mb-4">
         <div class="admin-card">
           <div class="card-header-clean">
             <h6 class="card-title-clean">
               <i class="bi bi-flask text-warning"></i>
-              <span>Test Lab &amp; Simulator Pengujian Mandiri</span>
+              <span>Test Lab &amp; Uji Sampel Foto Matriks Bab V</span>
             </h6>
-            <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Tanpa Hardware ESP32</span>
+            <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Pengujian Citra Berkas</span>
           </div>
 
           <div class="p-4">
@@ -1223,6 +1326,230 @@
     dropZone.addEventListener('drop', (e) => {
       const files = e.dataTransfer.files;
       if (files.length) handleFileUpload(files[0]);
+    });
+
+    // =========================================================================
+    // WEBCAM SIMULATOR LOGIC (LAPTOP CAMERA)
+    // =========================================================================
+    let localMediaStream = null;
+    let autoScanTimer = null;
+    let isScanning = false;
+
+    async function startWebcam() {
+      try {
+        const video = document.getElementById('webcamVideo');
+        const placeholder = document.getElementById('webcamPlaceholder');
+        const btnCapture = document.getElementById('btnCapture');
+        const btnAutoScan = document.getElementById('btnAutoScan');
+        const btnStopCam = document.getElementById('btnStopCam');
+
+        localMediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 640 }, height: { ideal: 480 } },
+          audio: false
+        });
+
+        video.srcObject = localMediaStream;
+        video.style.display = 'block';
+        placeholder.style.display = 'none';
+
+        btnCapture.disabled = false;
+        btnAutoScan.disabled = false;
+        btnStopCam.style.display = 'inline-block';
+
+      } catch (err) {
+        console.warn('Browser webcam tidak diizinkan atau gagal, mencoba backend OpenCV fallback:', err);
+        tryBackendOpenCVWebcam();
+      }
+    }
+
+    function tryBackendOpenCVWebcam() {
+      const video = document.getElementById('webcamVideo');
+      const placeholder = document.getElementById('webcamPlaceholder');
+      const btnCapture = document.getElementById('btnCapture');
+      const btnStopCam = document.getElementById('btnStopCam');
+
+      placeholder.innerHTML = `
+        <img id="opencvStreamImg" src="/api/webcam_feed" class="w-100 rounded" style="max-height: 360px; object-fit: contain;">
+      `;
+      btnCapture.disabled = false;
+      btnStopCam.style.display = 'inline-block';
+    }
+
+    function stopWebcam() {
+      if (autoScanTimer) {
+        clearInterval(autoScanTimer);
+        autoScanTimer = null;
+        isScanning = false;
+        const scanInd = document.getElementById('scanIndicator');
+        if (scanInd) scanInd.style.display = 'none';
+        const btnAuto = document.getElementById('btnAutoScan');
+        if (btnAuto) {
+          btnAuto.className = 'btn btn-outline-warning fw-semibold py-2';
+          btnAuto.innerHTML = '<i class="bi bi-repeat me-1"></i> Mulai Scan Otomatis (Tiap 2 Detik)';
+        }
+      }
+
+      if (localMediaStream) {
+        localMediaStream.getTracks().forEach(track => track.stop());
+        localMediaStream = null;
+      }
+
+      const video = document.getElementById('webcamVideo');
+      const placeholder = document.getElementById('webcamPlaceholder');
+      const btnCapture = document.getElementById('btnCapture');
+      const btnAutoScan = document.getElementById('btnAutoScan');
+      const btnStopCam = document.getElementById('btnStopCam');
+
+      if (video) {
+        video.pause();
+        video.srcObject = null;
+        video.style.display = 'none';
+      }
+      if (placeholder) {
+        placeholder.style.display = 'block';
+        placeholder.innerHTML = `
+          <i class="bi bi-camera-video-off text-muted fs-1 d-block mb-3"></i>
+          <h6 class="text-white fw-bold mb-2">Kamera Laptop Belum Diaktifkan</h6>
+          <p class="small text-muted mb-3" style="max-width: 440px; margin: 0 auto; line-height: 1.6;">
+            Klik tombol <strong>"Buka Kamera Laptop"</strong> di bawah untuk menyalakan webcam. Anda dapat menjepret frame untuk menguji respons deteksi AI secara langsung tanpa mikrokontroler fisik.
+          </p>
+          <button class="btn btn-glow-primary px-4 py-2" onclick="startWebcam()">
+            <i class="bi bi-play-circle-fill"></i> Buka Kamera Laptop
+          </button>
+        `;
+      }
+      if (btnCapture) btnCapture.disabled = true;
+      if (btnAutoScan) btnAutoScan.disabled = true;
+      if (btnStopCam) btnStopCam.style.display = 'none';
+
+      // Call backend to stop OpenCV camera as well
+      fetch('/api/webcam_stop', { method: 'POST' }).catch(() => {});
+    }
+
+    async function captureWebcamFrame(simulateFlash = true) {
+      const video = document.getElementById('webcamVideo');
+      if (!video || !localMediaStream) {
+        // Fallback to OpenCV backend
+        try {
+          const res = await fetch('/api/webcam_capture', { method: 'POST' });
+          const data = await res.json();
+          updateWebcamResultBanner(data);
+          await fetchStatus();
+          await loadLogsTable();
+        } catch (e) {
+          console.error(e);
+        }
+        return;
+      }
+
+      // Simulate ESP32-S3 Flash (white overlay)
+      if (simulateFlash) {
+        const flash = document.getElementById('flashOverlay');
+        if (flash) {
+          flash.style.display = 'block';
+          flash.style.opacity = '0.9';
+          setTimeout(() => {
+            flash.style.opacity = '0';
+            setTimeout(() => { flash.style.display = 'none'; }, 200);
+          }, 300);
+        }
+      }
+
+      // Capture frame to canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(async (blob) => {
+        if (!blob) return;
+        const formData = new FormData();
+        formData.append('image', blob, 'webcam_capture.jpg');
+
+        try {
+          const res = await fetch('/api/detect', {
+            method: 'POST',
+            body: formData
+          });
+          const data = await res.json();
+
+          updateWebcamResultBanner(data);
+          await fetchStatus();
+          await loadLogsTable();
+
+        } catch (err) {
+          console.error('Gagal inferensi webcam:', err);
+        }
+      }, 'image/jpeg', 0.85);
+    }
+
+    function updateWebcamResultBanner(data) {
+      const bannerCat = document.getElementById('webcamResultCategory');
+      const bannerRelay = document.getElementById('webcamResultRelay');
+      const bannerMetrics = document.getElementById('webcamResultMetrics');
+
+      if (bannerCat) {
+        const catStr = (data.category || '-').toUpperCase();
+        const classesStr = (data.detected_classes && data.detected_classes.length) ? ` [${data.detected_classes.join(', ')}]` : '';
+        bannerCat.textContent = catStr + classesStr;
+      }
+
+      if (bannerRelay) {
+        if (data.lamp_action === 'ON') {
+          bannerRelay.className = 'badge bg-success';
+          bannerRelay.textContent = 'RELAY ON';
+        } else {
+          bannerRelay.className = 'badge bg-secondary text-white';
+          bannerRelay.textContent = 'RELAY OFF';
+        }
+      }
+
+      if (bannerMetrics) {
+        const conf = data.confidence !== undefined ? Math.round(data.confidence * 100) : 0;
+        const lat = data.inference_time_ms ? data.inference_time_ms.toFixed(1) : '0';
+        bannerMetrics.textContent = `Confidence: ${conf}% • Waktu: ${lat} ms`;
+      }
+    }
+
+    function toggleAutoScan() {
+      const btn = document.getElementById('btnAutoScan');
+      const indicator = document.getElementById('scanIndicator');
+
+      if (isScanning) {
+        clearInterval(autoScanTimer);
+        autoScanTimer = null;
+        isScanning = false;
+        if (indicator) indicator.style.display = 'none';
+        if (btn) {
+          btn.className = 'btn btn-outline-warning fw-semibold py-2';
+          btn.innerHTML = '<i class="bi bi-repeat me-1"></i> Mulai Scan Otomatis (Tiap 2 Detik)';
+        }
+      } else {
+        isScanning = true;
+        if (indicator) indicator.style.display = 'block';
+        if (btn) {
+          btn.className = 'btn btn-warning fw-bold py-2 text-dark';
+          btn.innerHTML = '<i class="bi bi-stop-circle-fill me-1"></i> Hentikan Scan Otomatis';
+        }
+
+        // Immediate first scan
+        captureWebcamFrame(false);
+        // Interval scan every 2 seconds
+        autoScanTimer = setInterval(() => {
+          if (localMediaStream && isScanning) {
+            captureWebcamFrame(false);
+          }
+        }, 2000);
+      }
+    }
+
+    // Keyboard Spacebar trigger
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && localMediaStream && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        captureWebcamFrame(true);
+      }
     });
 
     async function handleFileUpload(file) {

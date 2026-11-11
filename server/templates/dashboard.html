@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Pemantauan &amp; Pengujian Lampu Pintar YOLOv8 | Ikhsan Wahyudi</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💡</text></svg>">
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons 1.11 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --sidebar-width: 270px;
+      --sidebar-bg: #0f172a;
+      --sidebar-hover: #1e293b;
+      --sidebar-active: #0284c7;
+      --sidebar-border: rgba(255, 255, 255, 0.08);
+      
+      --body-bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --border-focus: #38bdf8;
+      
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-secondary: #334155;
+      
+      --primary: #0284c7;
+      --primary-light: #e0f2fe;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --danger: #ef4444;
+      --danger-light: #fef2f2;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background-color: var(--body-bg);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      font-size: 0.88rem;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', Menlo, Consolas, monospace;
+    }
+
+    /* =========================================================================
+       SIDEBAR
+       ========================================================================= */
+    .app-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-width);
+      background-color: var(--sidebar-bg);
+      z-index: 1045;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--sidebar-border);
+      transition: transform 0.25s ease;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--sidebar-border);
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .researcher-card {
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid var(--sidebar-border);
+    }
+
+    .sidebar-nav {
+      padding: 16px 12px;
+      flex-grow: 1;
+    }
+
+    .nav-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+      padding: 10px 12px 6px;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-bottom: 3px;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-nav a:hover {
+      background: var(--sidebar-hover);
+      color: #ffffff;
+    }
+
+    .sidebar-nav a.active {
+      background: var(--sidebar-active);
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+    }
+
+    .sidebar-nav a i {
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .sidebar-diag {
+      padding: 14px 16px;
+      margin: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--sidebar-border);
+      border-radius: 10px;
+      font-size: 0.74rem;
+      color: #cbd5e1;
+    }
+
+    .sidebar-footer {
+      padding: 14px 18px;
+      border-top: 1px solid var(--sidebar-border);
+      font-size: 0.74rem;
+      color: #64748b;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1040;
+    }
+
+    /* =========================================================================
+       MAIN WRAPPER & TOP NAVBAR
+       ========================================================================= */
+    .main-wrapper {
+      margin-left: var(--sidebar-width);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: margin-left 0.25s ease;
+    }
+
+    .top-navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 28px;
+      position: sticky;
+      top: 0;
+      z-index: 1020;
+    }
+
+    .status-dot-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+      display: inline-block;
+      margin-right: 6px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Card Styling */
+    .admin-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      margin-bottom: 24px;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card-header-clean {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title-clean {
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* KPI Metric Cards */
+    .kpi-card {
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      height: 100%;
+    }
+
+    .kpi-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .kpi-relay-on {
+      background: var(--success-light);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .kpi-relay-off {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #cbd5e1;
+    }
+
+    /* Lamp Visual Indicator */
+    .lamp-glow-box {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .lamp-glow-on {
+      background: #f59e0b;
+      box-shadow: 0 0 14px #f59e0b, 0 0 24px #fbbf24;
+    }
+
+    .lamp-glow-off {
+      background: #94a3b8;
+    }
+
+    /* Drag and Drop Zone */
+    .drop-zone {
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 30px 20px;
+      text-align: center;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--primary);
+      background: #f0f9ff;
+    }
+
+    /* Table */
+    .custom-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.84rem;
+    }
+
+    .custom-table th {
+      background: #f8fafc;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    .custom-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+    }
+
+    .custom-table tr:hover td {
+      background: #f8fafc;
+    }
+
+    /* Responsive */
+    @media (max-width: 991px) {
+      .app-sidebar {
+        transform: translateX(-100%);
+      }
+      .app-sidebar.show {
+        transform: translateX(0);
+      }
+      .sidebar-backdrop.show {
+        display: block;
+      }
+      .main-wrapper {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile Drawer Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+
+  <!-- =========================================================================
+       SIDEBAR
+       ========================================================================= -->
+  <aside class="app-sidebar" id="appSidebar">
+    <!-- Header -->
+    <div class="sidebar-header">
+      <div class="d-flex align-items-center justify-content-between">
+        <a href="/" class="d-flex align-items-center gap-2 text-decoration-none">
+          <span class="fs-4">💡</span>
+          <div>
+            <div class="brand-title">SmartLamp AI</div>
+            <div class="small text-muted font-mono" style="font-size: 0.7rem;">YOLOv8 &bull; ESP32-S3</div>
+          </div>
+        </a>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-mono" style="font-size: 0.65rem;">v1.0</span>
+      </div>
+    </div>
+
+    <!-- Researcher Profile Card -->
+    <div class="researcher-card">
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <i class="bi bi-person-fill text-info"></i>
+        <span class="text-white fw-bold" style="font-size: 0.82rem;">Ikhsan Wahyudi</span>
+      </div>
+      <div class="font-mono text-muted" style="font-size: 0.72rem;">NPM: 235520110043</div>
+      <div class="text-muted" style="font-size: 0.7rem;">Informatika Universitas Almuslim</div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="sidebar-nav">
+      <div class="nav-label">Navigasi Utama</div>
+      <a href="#overview" class="active" onclick="handleNavClick(this)">
+        <i class="bi bi-grid-1x2-fill"></i>
+        <span>Overview &amp; Live Feed</span>
+      </a>
+      <a href="#test-lab" onclick="handleNavClick(this)">
+        <i class="bi bi-flask-fill"></i>
+        <span>Test Lab &amp; Simulator</span>
+      </a>
+      <a href="#analisis" onclick="handleNavClick(this)">
+        <i class="bi bi-graph-up"></i>
+        <span>Metrik &amp; Grafik Analisis</span>
+      </a>
+      <a href="#log-pengujian" onclick="handleNavClick(this)">
+        <i class="bi bi-table"></i>
+        <span>Log Pengujian Bab V</span>
+      </a>
+      <a href="#hardware-info" onclick="handleNavClick(this)">
+        <i class="bi bi-cpu-fill"></i>
+        <span>Spesifikasi Hardware</span>
+      </a>
+
+      <div class="nav-label mt-3">Tautan Eksternal</div>
+      <a href="/" class="text-info">
+        <i class="bi bi-box-arrow-left"></i>
+        <span>Kembali ke Landing Page</span>
+      </a>
+    </div>
+
+    <!-- Sidebar Diagnostics Box -->
+    <div class="sidebar-diag">
+      <div class="fw-bold text-white mb-2 d-flex align-items-center justify-content-between">
+        <span>Status Peladen</span>
+        <span class="badge bg-success font-mono" style="font-size: 0.65rem;">ONLINE</span>
+      </div>
+      <div class="d-flex justify-content-between mb-1">
+        <span class="text-muted">Target Host:</span>
+        <span class="font-mono text-white text-truncate" style="max-width: 130px;">ikhsan.mhsfikom.my.id</span>
+      </div>
+      <div class="d-flex justify-content-between mb-1">
+        <span class="text-muted">Model AI:</span>
+        <span class="font-mono text-info" id="side-model-type">yolov8n.pt</span>
+      </div>
+      <div class="d-flex justify-content-between">
+        <span class="text-muted">Thread BLAS:</span>
+        <span class="font-mono text-warning">1 (NPROC Safe)</span>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="sidebar-footer d-flex justify-content-between align-items-center">
+      <span>&copy; 2026 Ikhsan Wahyudi</span>
+      <span class="font-mono" id="clock-sidebar">--:--:--</span>
+    </div>
+  </aside>
+
+  <!-- =========================================================================
+       MAIN CONTENT WRAPPER
+       ========================================================================= -->
+  <div class="main-wrapper">
+    
+    <!-- Top Navbar -->
+    <header class="top-navbar d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-sm btn-light border d-lg-none" type="button" onclick="toggleSidebar()">
+          <i class="bi bi-list fs-5"></i>
+        </button>
+        <div>
+          <h6 class="mb-0 fw-bold text-dark">Dashboard Sistem Kendali Lampu Pintar</h6>
+          <div class="small text-muted font-mono" style="font-size: 0.72rem;">
+            Implementasi YOLOv8 &bull; ESP32-S3-CAM &bull; Subdomain: ikhsan.mhsfikom.my.id
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-success-subtle text-success border border-success-subtle d-none d-md-inline-flex align-items-center py-2 px-3">
+          <span class="status-dot-pulse"></span>
+          <span>Peladen Cloud Aktif</span>
+        </span>
+
+        <button class="btn btn-sm btn-outline-secondary" onclick="fetchStatus(); loadLogsTable();" title="Segarkan Data">
+          <i class="bi bi-arrow-clockwise"></i> <span class="d-none d-sm-inline">Refresh</span>
+        </button>
+
+        <a href="/api/export-csv" class="btn btn-sm btn-success d-flex align-items-center gap-1">
+          <i class="bi bi-file-earmark-excel"></i>
+          <span class="d-none d-sm-inline">Ekspor CSV Bab V</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="p-4">
+
+      <!-- =====================================================================
+           SECTION 1: OVERVIEW & KPI METRIC CARDS
+           ===================================================================== -->
+      <section id="overview" class="content-section mb-4">
+        <div class="row g-3">
+          
+          <!-- Card 1: Status Relay Lampu -->
+          <div class="col-xl-3 col-md-6">
+            <div class="kpi-card" id="kpi-card-relay">
+              <div class="kpi-icon-box kpi-relay-off" id="kpi-relay-icon">
+                <i class="bi bi-lightbulb-fill"></i>
+              </div>
+              <div>
+                <div class="small text-muted fw-semibold">STATUS RELAY LAMPU</div>
+                <div class="d-flex align-items-center gap-2 mt-1">
+                  <span class="fs-4 fw-bold" id="kpi-relay-text">RELAY OFF</span>
+                  <span class="lamp-glow-box lamp-glow-off" id="kpi-lamp-dot"></span>
+                </div>
+                <div class="small text-muted font-mono mt-1" style="font-size: 0.72rem;" id="kpi-relay-pin">GPIO 14 (Active LOW)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Kategori Objek Terakhir -->
+          <div class="col-xl-3 col-md-6">
+            <div class="kpi-card">
+              <div class="kpi-icon-box" style="background: #e0f2fe; color: #0284c7;">
+                <i class="bi bi-person-bounding-box"></i>
+              </div>
+              <div>
+                <div class="small text-muted fw-semibold">KATEGORI TERAKHIR</div>
+                <div class="fs-4 fw-bold text-dark mt-1 text-uppercase" id="kpi-category">-</div>
+                <div class="small text-muted font-mono mt-1" style="font-size: 0.72rem;" id="kpi-classes">Menunggu input citra</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Confidence Score -->
+          <div class="col-xl-3 col-md-6">
+            <div class="kpi-card">
+              <div class="kpi-icon-box" style="background: #ecfdf5; color: #10b981;">
+                <i class="bi bi-shield-check"></i>
+              </div>
+              <div class="w-100">
+                <div class="small text-muted fw-semibold">TINGKAT KEPERCAYAAN</div>
+                <div class="fs-4 fw-bold text-dark mt-1" id="kpi-confidence">0.0%</div>
+                <div class="progress mt-2" style="height: 5px;">
+                  <div class="progress-bar bg-success" id="kpi-confidence-bar" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: Waktu Inferensi AI -->
+          <div class="col-xl-3 col-md-6">
+            <div class="kpi-card">
+              <div class="kpi-icon-box" style="background: #fffbeb; color: #f59e0b;">
+                <i class="bi bi-stopwatch-fill"></i>
+              </div>
+              <div>
+                <div class="small text-muted fw-semibold">WAKTU INFERENSI</div>
+                <div class="fs-4 fw-bold text-dark mt-1" id="kpi-inference-time">0.0 ms</div>
+                <div class="small text-muted font-mono mt-1" style="font-size: 0.72rem;" id="kpi-total-tests">Total Uji: 0 kali</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           SECTION 2: LIVE DETECTION VIEW & DECISION ENGINE
+           ===================================================================== -->
+      <section class="mb-4">
+        <div class="row g-4">
+          
+          <!-- Sisi Kiri: Foto Deteksi Terakhir -->
+          <div class="col-lg-7">
+            <div class="admin-card h-100">
+              <div class="card-header-clean">
+                <h6 class="card-title-clean">
+                  <i class="bi bi-camera-video-fill text-primary"></i>
+                  <span>Pratinjau Citra Deteksi Terakhir</span>
+                </h6>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge bg-secondary-subtle text-secondary font-mono" id="detect-time-stamp">--:--:--</span>
+                  <button class="btn btn-sm btn-light border" onclick="refreshImageManual()" title="Refresh Gambar">
+                    <i class="bi bi-arrow-repeat"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="p-3 text-center bg-black position-relative" style="min-height: 380px; display: flex; align-items: center; justify-content: center;">
+                <img id="live-detection-img" src="/static/latest_detection.jpg" alt="Deteksi Terakhir" class="img-fluid rounded" style="max-height: 400px; object-fit: contain;" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'640\' height=\'480\' fill=\'%230f172a\'><rect width=\'100%25\' height=\'100%25\'/><text x=\'50%25\' y=\'50%25\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%2364748b\' font-size=\'18\' font-family=\'sans-serif\'>Belum ada citra yang dikirim ke server</text></svg>';">
+                
+                <!-- Overlay pill info -->
+                <div class="position-absolute bottom-0 start-0 m-3 p-2 rounded bg-dark bg-opacity-75 text-white small font-mono border border-secondary" style="font-size: 0.75rem;">
+                  <span id="img-overlay-name">File: -</span> &bull; 
+                  <span id="img-overlay-action" class="badge bg-secondary">OFF</span>
+                </div>
+              </div>
+
+              <div class="p-3 bg-light border-top small text-muted d-flex justify-content-between align-items-center">
+                <div>
+                  <i class="bi bi-info-circle me-1"></i> Resolusi kamera standar: <strong>VGA 640x480 JPEG</strong>
+                </div>
+                <div class="font-mono" id="img-overlay-conf">Ambang Batas Conf: &ge; 0.50</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sisi Kanan: Mesin Keputusan & Logika Relay -->
+          <div class="col-lg-5">
+            <div class="admin-card h-100">
+              <div class="card-header-clean">
+                <h6 class="card-title-clean">
+                  <i class="bi bi-cpu text-info"></i>
+                  <span>Logika Keputusan Relay (PRD Sub-bab 2.2)</span>
+                </h6>
+              </div>
+              
+              <div class="p-4">
+                <div class="mb-3">
+                  <label class="small text-muted fw-semibold d-block mb-1">Keputusan Akhir Beban Listrik:</label>
+                  <div class="p-3 rounded border text-center" id="decision-box" style="background: #f8fafc;">
+                    <h3 class="fw-bold mb-1" id="decision-title">RELAY OFF</h3>
+                    <p class="small text-muted mb-0" id="decision-desc">Menunggu deteksi gerakan berikutnya dari sensor PIR.</p>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="small text-muted fw-semibold d-block mb-1">Daftar Objek Terdeteksi AI:</label>
+                  <div class="p-2 rounded bg-light border font-mono small" id="detected-objects-list" style="min-height: 60px;">
+                    <span class="text-muted">Tidak ada objek teridentifikasi.</span>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="small text-muted fw-semibold d-block mb-1">Parameter Waktu &amp; Auto-Extend:</label>
+                  <div class="p-3 rounded bg-light border font-mono" style="font-size: 0.8rem;">
+                    <div class="d-flex justify-content-between mb-1">
+                      <span class="text-muted">Durasi Dasar Nyala:</span>
+                      <span class="fw-bold text-dark">10.000 ms (10 Detik)</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                      <span class="text-muted">Jeda Stabilisasi Flash:</span>
+                      <span class="fw-bold text-dark">500 ms</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <span class="text-muted">Waktu Tenang (Cooldown):</span>
+                      <span class="fw-bold text-dark">3.000 ms</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-2 rounded bg-info-subtle border border-info-subtle small text-secondary">
+                  <i class="bi bi-lightbulb-fill text-warning me-1"></i>
+                  <strong>Aturan Matriks Skripsi:</strong> Lampu menyala HANYA jika terdeteksi kelas <code>manusia</code>, <code>mobil</code>, atau <code>motor</code>. Kelas hewan dibiarkan padam.
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           SECTION 3: TEST LAB & SIMULATOR MANDIRI
+           ===================================================================== -->
+      <section id="test-lab" class="content-section mb-4">
+        <div class="admin-card">
+          <div class="card-header-clean">
+            <h6 class="card-title-clean">
+              <i class="bi bi-flask text-warning"></i>
+              <span>Test Lab &amp; Simulator Pengujian Mandiri</span>
+            </h6>
+            <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Tanpa Hardware ESP32</span>
+          </div>
+
+          <div class="p-4">
+            <div class="row g-4">
+              <!-- Upload Custom Image -->
+              <div class="col-md-6">
+                <label class="fw-bold text-dark mb-2">Uji Foto Kustom Anda (Drag &amp; Drop):</label>
+                <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                  <i class="bi bi-cloud-arrow-up text-primary fs-1 d-block mb-2"></i>
+                  <div class="fw-semibold text-dark">Klik atau Seret Berkas Gambar ke Sini</div>
+                  <div class="small text-muted">Mendukung format JPG, JPEG, PNG (Maksimal 5 MB)</div>
+                  <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileUpload(this.files[0])">
+                </div>
+                <div id="uploadStatus" class="mt-2 small font-mono"></div>
+              </div>
+
+              <!-- One-Click Sample Test Buttons -->
+              <div class="col-md-6">
+                <label class="fw-bold text-dark mb-2">Uji Cepat Sampel Foto Matriks Bab V:</label>
+                <p class="small text-muted mb-3">Klik tombol di bawah untuk menguji respons server dan logika relay secara seketika:</p>
+
+                <div class="d-grid gap-2">
+                  <button class="btn btn-outline-success text-start p-3 d-flex align-items-center justify-content-between" onclick="runSampleTest('uji_manusia.jpg', this)">
+                    <div>
+                      <div class="fw-bold"><i class="bi bi-person-fill text-success me-2"></i>Sampel SK-02: Manusia</div>
+                      <div class="small text-muted">Ekspektasi: Kategori Manusia &rarr; RELAY ON</div>
+                    </div>
+                    <i class="bi bi-play-circle fs-4 text-success"></i>
+                  </button>
+
+                  <button class="btn btn-outline-warning text-start p-3 d-flex align-items-center justify-content-between" onclick="runSampleTest('uji_kucing.jpg', this)">
+                    <div>
+                      <div class="fw-bold"><i class="bi bi-emoji-smile text-warning me-2"></i>Sampel SK-05: Kucing (Hewan)</div>
+                      <div class="small text-muted">Ekspektasi: Kategori Hewan &rarr; RELAY OFF (Lampu Tetap Padam)</div>
+                    </div>
+                    <i class="bi bi-play-circle fs-4 text-warning"></i>
+                  </button>
+
+                  <button class="btn btn-outline-primary text-start p-3 d-flex align-items-center justify-content-between" onclick="runSampleTest('uji_manusia_bus.jpg', this)">
+                    <div>
+                      <div class="fw-bold"><i class="bi bi-truck text-primary me-2"></i>Sampel SK-08: Multi-Objek (Manusia + Bus)</div>
+                      <div class="small text-muted">Ekspektasi: Terdeteksi Manusia &rarr; RELAY ON</div>
+                    </div>
+                    <i class="bi bi-play-circle fs-4 text-primary"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           SECTION 4: GRAFIK & ANALISIS STATISTIK
+           ===================================================================== -->
+      <section id="analisis" class="content-section mb-4">
+        <div class="row g-4">
+          <!-- Donut Chart: Proporsi Objek -->
+          <div class="col-lg-6">
+            <div class="admin-card h-100">
+              <div class="card-header-clean">
+                <h6 class="card-title-clean">
+                  <i class="bi bi-pie-chart-fill text-primary"></i>
+                  <span>Distribusi Kategori Objek Terdeteksi</span>
+                </h6>
+              </div>
+              <div class="p-4 d-flex justify-content-center" style="max-height: 320px;">
+                <canvas id="categoryChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bar Chart: Waktu Inferensi per Skenario -->
+          <div class="col-lg-6">
+            <div class="admin-card h-100">
+              <div class="card-header-clean">
+                <h6 class="card-title-clean">
+                  <i class="bi bi-bar-chart-fill text-success"></i>
+                  <span>Rata-Rata Waktu Inferensi AI (Milidetik)</span>
+                </h6>
+              </div>
+              <div class="p-4" style="max-height: 320px;">
+                <canvas id="latencyChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           SECTION 5: TABEL LOG PENGUJIAN BAB V
+           ===================================================================== -->
+      <section id="log-pengujian" class="content-section mb-4">
+        <div class="admin-card">
+          <div class="card-header-clean flex-wrap gap-2">
+            <div>
+              <h6 class="card-title-clean mb-1">
+                <i class="bi bi-journal-text text-info"></i>
+                <span>Rekapitulasi Data Log Pengujian (CSV)</span>
+              </h6>
+              <div class="small text-muted">Data persisten acuan pembuatan tabel dan grafik Bab V Skripsi.</div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <input type="text" id="logSearchInput" class="form-control form-control-sm" placeholder="Cari data..." style="max-width: 180px;" onkeyup="filterLogsTable()">
+              <a href="/api/export-csv" class="btn btn-sm btn-success">
+                <i class="bi bi-download"></i> Unduh CSV
+              </a>
+              <button class="btn btn-sm btn-outline-danger" onclick="clearLogs()">
+                <i class="bi bi-trash"></i> Bersihkan Log
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="custom-table" id="logsTable">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Waktu Pengujian</th>
+                  <th>Nama Berkas Citra</th>
+                  <th>Kategori Objek</th>
+                  <th>Kelas Terdeteksi</th>
+                  <th>Confidence</th>
+                  <th>Waktu Inferensi</th>
+                  <th>Keputusan Relay</th>
+                </tr>
+              </thead>
+              <tbody id="logsTableBody">
+                <tr>
+                  <td colspan="8" class="text-center py-4 text-muted">Memuat data log pengujian...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="p-3 bg-light border-top d-flex justify-content-between align-items-center small text-muted">
+            <span id="logCountLabel">Menampilkan 0 data pengujian</span>
+            <span class="font-mono">Auto-refresh setiap 3 detik</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           SECTION 6: SPESIFIKASI HARDWARE & INFO SERVER
+           ===================================================================== -->
+      <section id="hardware-info" class="content-section mb-4">
+        <div class="admin-card">
+          <div class="card-header-clean">
+            <h6 class="card-title-clean">
+              <i class="bi bi-cpu-fill text-primary"></i>
+              <span>Spesifikasi Hardware &amp; Arsitektur Cloud</span>
+            </h6>
+          </div>
+
+          <div class="p-4">
+            <div class="row g-4">
+              <div class="col-md-6">
+                <h6 class="fw-bold text-dark mb-3">Konfigurasi Pinout ESP32-S3:</h6>
+                <table class="table table-sm table-bordered font-mono small">
+                  <thead class="table-light">
+                    <tr><th>Komponen</th><th>Pin GPIO</th><th>Fungsi Teknis</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Relay 5V</td><td>GPIO 14</td><td>Kendali Lampu 12V (Active LOW)</td></tr>
+                    <tr><td>Sensor PIR</td><td>GPIO 21</td><td>Input Pemicu Gerak (Bebas clock kamera)</td></tr>
+                    <tr><td>Kamera OV2640</td><td>GPIO 11, 12, 13, dll.</td><td>Transmisi Citra VGA via DVP</td></tr>
+                    <tr><td>Regulator LM2596</td><td>VCC / GND</td><td>Suplai 5.0V Stabil</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="col-md-6">
+                <h6 class="fw-bold text-dark mb-3">Endpoint API Produksi (cPanel Hosting):</h6>
+                <div class="p-3 bg-light rounded border font-mono small">
+                  <div class="mb-2"><strong>Web Dashboard:</strong> <a href="https://ikhsan.mhsfikom.my.id" target="_blank" class="text-primary">https://ikhsan.mhsfikom.my.id</a></div>
+                  <div class="mb-2"><strong>Deteksi POST:</strong> <span class="text-success">https://ikhsan.mhsfikom.my.id/api/detect</span></div>
+                  <div class="mb-2"><strong>Status GET:</strong> <span class="text-info">https://ikhsan.mhsfikom.my.id/api/status</span></div>
+                  <div><strong>Health Check:</strong> <span class="text-warning">https://ikhsan.mhsfikom.my.id/api/health</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="p-3 bg-white border-top text-center text-muted small mt-auto">
+      Sistem Kendali Lampu Pintar Menggunakan Deep Learning (YOLOv8) &bull; Ikhsan Wahyudi (235520110043) &bull; S1 Informatika Universitas Almuslim &bull; 2026
+    </footer>
+  </div>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Dashboard JavaScript Logic -->
+  <script>
+    // Toggle Mobile Sidebar
+    function toggleSidebar() {
+      const sidebar = document.getElementById('appSidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      sidebar.classList.toggle('show');
+      backdrop.classList.toggle('show');
+    }
+
+    function handleNavClick(element) {
+      document.querySelectorAll('.sidebar-nav a').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+      if (window.innerWidth < 992) {
+        toggleSidebar();
+      }
+    }
+
+    // Live Clock
+    function updateClock() {
+      const now = new Date();
+      const str = now.toLocaleTimeString('id-ID');
+      const sideClock = document.getElementById('clock-sidebar');
+      if (sideClock) sideClock.textContent = str;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Refresh Image Manual
+    function refreshImageManual() {
+      const img = document.getElementById('live-detection-img');
+      if (img) {
+        img.src = '/static/latest_detection.jpg?t=' + new Date().getTime();
+      }
+    }
+
+    // Chart.js Instances
+    let categoryChartInstance = null;
+    let latencyChartInstance = null;
+
+    function initCharts() {
+      const ctxCat = document.getElementById('categoryChart');
+      const ctxLat = document.getElementById('latencyChart');
+
+      if (ctxCat) {
+        categoryChartInstance = new Chart(ctxCat, {
+          type: 'doughnut',
+          data: {
+            labels: ['Manusia', 'Hewan', 'Kendaraan', 'Kosong'],
+            datasets: [{
+              data: [1, 0, 0, 0],
+              backgroundColor: ['#10b981', '#f59e0b', '#0284c7', '#94a3b8'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom' }
+            }
+          }
+        });
+      }
+
+      if (ctxLat) {
+        latencyChartInstance = new Chart(ctxLat, {
+          type: 'bar',
+          data: {
+            labels: ['Manusia', 'Hewan', 'Kendaraan', 'Kosong'],
+            datasets: [{
+              label: 'Waktu Inferensi Rata-Rata (ms)',
+              data: [130, 125, 140, 110],
+              backgroundColor: ['#34d399', '#fbbf24', '#38bdf8', '#cbd5e1'],
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { beginAtZero: true, title: { display: true, text: 'Milidetik (ms)' } }
+            }
+          }
+        });
+      }
+    }
+
+    // Fetch Status from /api/status
+    async function fetchStatus() {
+      try {
+        const res = await fetch('/api/status');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // Relay KPI
+        const isRelayOn = (data.lamp_action === 'ON');
+        const kpiRelayText = document.getElementById('kpi-relay-text');
+        const kpiRelayIcon = document.getElementById('kpi-relay-icon');
+        const kpiLampDot = document.getElementById('kpi-lamp-dot');
+        const decisionBox = document.getElementById('decision-box');
+        const decisionTitle = document.getElementById('decision-title');
+        const decisionDesc = document.getElementById('decision-desc');
+
+        if (isRelayOn) {
+          kpiRelayText.textContent = 'RELAY ON';
+          kpiRelayIcon.className = 'kpi-icon-box kpi-relay-on';
+          kpiLampDot.className = 'lamp-glow-box lamp-glow-on';
+          decisionBox.style.background = '#ecfdf5';
+          decisionBox.style.borderColor = '#10b981';
+          decisionTitle.className = 'fw-bold mb-1 text-success';
+          decisionTitle.textContent = 'RELAY ON (LAMPU MENYALA)';
+          decisionDesc.textContent = 'Terdeteksi objek prioritas (' + (data.category || '').toUpperCase() + '). Lampu aktif 10 detik.';
+        } else {
+          kpiRelayText.textContent = 'RELAY OFF';
+          kpiRelayIcon.className = 'kpi-icon-box kpi-relay-off';
+          kpiLampDot.className = 'lamp-glow-box lamp-glow-off';
+          decisionBox.style.background = '#f8fafc';
+          decisionBox.style.borderColor = '#e2e8f0';
+          decisionTitle.className = 'fw-bold mb-1 text-secondary';
+          decisionTitle.textContent = 'RELAY OFF (LAMPU PADAM)';
+          decisionDesc.textContent = 'Tidak terdeteksi manusia/kendaraan. Lampu tetap padam untuk efisiensi listrik.';
+        }
+
+        // Category & Confidence
+        document.getElementById('kpi-category').textContent = (data.category || '-').toUpperCase();
+        const confVal = Math.round((data.confidence || 0) * 100);
+        document.getElementById('kpi-confidence').textContent = confVal + '%';
+        document.getElementById('kpi-confidence-bar').style.width = confVal + '%';
+
+        // Inference Time
+        document.getElementById('kpi-inference-time').textContent = (data.inference_time_ms ? data.inference_time_ms.toFixed(1) : '0.0') + ' ms';
+
+        // Classes list
+        const classEl = document.getElementById('kpi-classes');
+        const objListEl = document.getElementById('detected-objects-list');
+        if (data.detected_classes && data.detected_classes.length > 0) {
+          classEl.textContent = data.detected_classes.join(', ');
+          objListEl.innerHTML = data.detected_classes.map(c => `<span class="badge bg-primary me-1">${c}</span>`).join('');
+        } else {
+          classEl.textContent = 'Tidak ada objek';
+          objListEl.innerHTML = '<span class="text-muted">Tidak ada objek teridentifikasi.</span>';
+        }
+
+        // Image overlay
+        document.getElementById('img-overlay-name').textContent = 'File: ' + (data.file_name || '-');
+        const actionBadge = document.getElementById('img-overlay-action');
+        actionBadge.className = isRelayOn ? 'badge bg-success' : 'badge bg-secondary';
+        actionBadge.textContent = data.lamp_action || 'OFF';
+        document.getElementById('detect-time-stamp').textContent = data.timestamp || '--:--:--';
+
+        // Model Type
+        const modelEl = document.getElementById('side-model-type');
+        if (modelEl) modelEl.textContent = data.is_custom_model ? 'best.pt (Custom)' : 'yolov8n.pt (Pretrained)';
+
+        // Refresh image
+        if (data.file_name) {
+          refreshImageManual();
+        }
+
+      } catch (err) {
+        console.error('Gagal mengambil status:', err);
+      }
+    }
+
+    // Load Logs from /api/logs
+    async function loadLogsTable() {
+      try {
+        const res = await fetch('/api/logs');
+        if (!res.ok) return;
+        const logs = await res.json();
+        
+        const tbody = document.getElementById('logsTableBody');
+        const countLabel = document.getElementById('logCountLabel');
+        const totalTests = document.getElementById('kpi-total-tests');
+
+        if (totalTests) totalTests.textContent = 'Total Uji: ' + logs.length + ' kali';
+        if (countLabel) countLabel.textContent = `Menampilkan ${logs.length} data pengujian`;
+
+        if (!logs || logs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted">Belum ada riwayat pengujian. Silakan lakukan deteksi melalui ESP32 atau Test Lab.</td></tr>';
+          return;
+        }
+
+        // Build Rows (terbaru di atas)
+        tbody.innerHTML = logs.map((row, idx) => {
+          const isON = (row.Status_Lampu_Keputusan === 'ON' || row.lamp_action === 'ON');
+          const statusBadge = isON 
+            ? '<span class="badge bg-success">RELAY ON</span>' 
+            : '<span class="badge bg-secondary">RELAY OFF</span>';
+          
+          const cat = row.Kategori || row.category || '-';
+          let catBadge = '<span class="badge bg-secondary">' + cat + '</span>';
+          if (cat === 'manusia') catBadge = '<span class="badge bg-success">' + cat + '</span>';
+          else if (cat === 'hewan') catBadge = '<span class="badge bg-warning text-dark">' + cat + '</span>';
+          else if (cat === 'kendaraan') catBadge = '<span class="badge bg-primary">' + cat + '</span>';
+
+          return `
+            <tr>
+              <td class="font-mono text-muted">${idx + 1}</td>
+              <td class="font-mono">${row.Timestamp || row.timestamp || '-'}</td>
+              <td class="font-mono small text-truncate" style="max-width: 140px;">${row.Nama_File || row.file_name || '-'}</td>
+              <td>${catBadge}</td>
+              <td class="font-mono">${row.Kelas_Terdeteksi || row.detected_classes || '-'}</td>
+              <td class="font-mono">${row.Confidence || row.confidence || '0.0'}</td>
+              <td class="font-mono">${row.Waktu_Inferensi_ms || row.inference_time_ms || '0'} ms</td>
+              <td>${statusBadge}</td>
+            </tr>
+          `;
+        }).join('');
+
+        // Update Charts Data
+        updateChartsData(logs);
+
+      } catch (err) {
+        console.error('Gagal mengambil logs:', err);
+      }
+    }
+
+    // Update charts based on logs
+    function updateChartsData(logs) {
+      if (!categoryChartInstance) return;
+
+      let catCount = { manusia: 0, hewan: 0, kendaraan: 0, kosong: 0 };
+      let latencies = { manusia: [], hewan: [], kendaraan: [], kosong: [] };
+
+      logs.forEach(item => {
+        const c = (item.Kategori || item.category || 'kosong').toLowerCase();
+        const lat = parseFloat(item.Waktu_Inferensi_ms || item.inference_time_ms || 0);
+
+        if (c.includes('manusia')) {
+          catCount.manusia++;
+          if (lat > 0) latencies.manusia.push(lat);
+        } else if (c.includes('hewan') || c.includes('kucing') || c.includes('lembu') || c.includes('kambing')) {
+          catCount.hewan++;
+          if (lat > 0) latencies.hewan.push(lat);
+        } else if (c.includes('kendaraan') || c.includes('mobil') || c.includes('motor')) {
+          catCount.kendaraan++;
+          if (lat > 0) latencies.kendaraan.push(lat);
+        } else {
+          catCount.kosong++;
+          if (lat > 0) latencies.kosong.push(lat);
+        }
+      });
+
+      categoryChartInstance.data.datasets[0].data = [
+        catCount.manusia, catCount.hewan, catCount.kendaraan, catCount.kosong
+      ];
+      categoryChartInstance.update();
+
+      if (latencyChartInstance) {
+        const avg = (arr) => arr.length ? (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1) : 0;
+        latencyChartInstance.data.datasets[0].data = [
+          avg(latencies.manusia),
+          avg(latencies.hewan),
+          avg(latencies.kendaraan),
+          avg(latencies.kosong)
+        ];
+        latencyChartInstance.update();
+      }
+    }
+
+    // Filter Logs Table
+    function filterLogsTable() {
+      const q = document.getElementById('logSearchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#logsTableBody tr');
+      rows.forEach(tr => {
+        const text = tr.textContent.toLowerCase();
+        tr.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+
+    // Run One-Click Sample Test
+    async function runSampleTest(filename, btn) {
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = '<span>Memproses AI...</span> <span class="spinner-border spinner-border-sm"></span>';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/test-sample', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename })
+        });
+        const data = await res.json();
+        
+        // Refresh status & logs
+        await fetchStatus();
+        await loadLogsTable();
+
+        alert(`Hasil Pengujian [${filename}]:\n- Kategori: ${data.category}\n- Relay: ${data.lamp_action}\n- Confidence: ${data.confidence}\n- Waktu: ${data.inference_time_ms.toFixed(1)} ms`);
+      } catch (err) {
+        alert('Gagal menjalankan pengujian sampel: ' + err.message);
+      } finally {
+        btn.innerHTML = origHtml;
+        btn.disabled = false;
+      }
+    }
+
+    // Drag & Drop Upload
+    const dropZone = document.getElementById('dropZone');
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); }, false);
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); }, false);
+    });
+    dropZone.addEventListener('drop', (e) => {
+      const files = e.dataTransfer.files;
+      if (files.length) handleFileUpload(files[0]);
+    });
+
+    async function handleFileUpload(file) {
+      if (!file) return;
+      const statusEl = document.getElementById('uploadStatus');
+      statusEl.innerHTML = '<span class="text-primary"><i class="bi bi-hourglass-split"></i> Mengunggah & menganalisis citra...</span>';
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const res = await fetch('/api/detect', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        
+        statusEl.innerHTML = `<span class="text-success fw-bold"><i class="bi bi-check-circle"></i> Selesai: ${data.category.toUpperCase()} (Relay: ${data.lamp_action}, Waktu: ${data.inference_time_ms.toFixed(1)}ms)</span>`;
+        
+        await fetchStatus();
+        await loadLogsTable();
+      } catch (err) {
+        statusEl.innerHTML = `<span class="text-danger"><i class="bi bi-x-circle"></i> Gagal: ${err.message}</span>`;
+      }
+    }
+
+    // Clear Logs
+    async function clearLogs() {
+      if (!confirm('Apakah Anda yakin ingin menghapus seluruh log pengujian?')) return;
+      try {
+        const res = await fetch('/api/clear-logs', { method: 'POST' });
+        if (res.ok) {
+          await loadLogsTable();
+          await fetchStatus();
+          alert('Log pengujian berhasil dibersihkan.');
+        }
+      } catch (err) {
+        alert('Gagal membersihkan log: ' + err.message);
+      }
+    }
+
+    // Initialize Dashboard on Load
+    document.addEventListener('DOMContentLoaded', () => {
+      initCharts();
+      fetchStatus();
+      loadLogsTable();
+
+      // Polling updates every 3 seconds
+      setInterval(() => {
+        fetchStatus();
+        loadLogsTable();
+      }, 3000);
+    });
+  </script>
+</body>
+</html>

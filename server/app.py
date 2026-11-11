@@ -80,8 +80,14 @@ def api_health():
 
 @app.route('/')
 def index():
-    """Halaman Utama Web Dashboard Pemantauan Lokal."""
-    return render_template('index.html')
+    """Halaman Utama Landing Page Penelitian & Sistem."""
+    return render_template('landing.html')
+
+@app.route('/dashboard')
+@app.route('/index.html')
+def dashboard():
+    """Halaman Utama Web Dashboard Pemantauan & Analisis Real-Time."""
+    return render_template('dashboard.html')
 
 @app.route('/api/detect', methods=['POST'])
 def api_detect():

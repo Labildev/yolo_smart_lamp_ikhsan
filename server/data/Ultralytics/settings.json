@@ -1,5 +1,5 @@
 {
-  "settings_version": "0.0.8",
+  "settings_version": "0.0.6",
   "datasets_dir": "D:\\LABIL\\BIMBEL\\IKHSAN\\SMART_LAMP\\datasets",
   "weights_dir": "weights",
   "runs_dir": "runs",
@@ -10,7 +10,9 @@
   "clearml": true,
   "comet": true,
   "dvc": true,
+  "hub": true,
   "mlflow": true,
+  "neptune": true,
   "raytune": true,
   "tensorboard": false,
   "wandb": false,

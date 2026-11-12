@@ -271,6 +271,30 @@
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
     }
 
+    /* Academic Team Avatar */
+    .team-avatar {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      background: rgba(56, 189, 248, 0.12);
+      border: 2px solid rgba(56, 189, 248, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      color: #38bdf8;
+      font-size: 2.3rem;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover .team-avatar {
+      transform: scale(1.08);
+      border-color: #38bdf8;
+      box-shadow: 0 0 30px rgba(56, 189, 248, 0.45);
+      background: rgba(56, 189, 248, 0.2);
+    }
+
     .feature-card p {
       color: #cbd5e1 !important;
       font-size: 0.92rem;
@@ -868,8 +892,8 @@
         <!-- Peneliti -->
         <div class="col-lg-4 col-md-6">
           <div class="feature-card text-center">
-            <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center bg-primary bg-opacity-20 border border-primary border-opacity-50" style="width: 80px; height: 80px;">
-              <i class="bi bi-person-fill text-info fs-1"></i>
+            <div class="team-avatar">
+              <i class="bi bi-person-fill"></i>
             </div>
             <h5 class="fw-bold text-white mb-1">Ikhsan Wahyudi</h5>
             <div class="text-info font-mono small mb-2 fw-semibold">NPM: 235520110043</div>
@@ -880,11 +904,11 @@
         <!-- Pembimbing 1 -->
         <div class="col-lg-4 col-md-6">
           <div class="feature-card text-center">
-            <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center bg-success bg-opacity-20 border border-success border-opacity-50" style="width: 80px; height: 80px;">
-              <i class="bi bi-person-badge-fill text-success fs-1"></i>
+            <div class="team-avatar">
+              <i class="bi bi-person-fill"></i>
             </div>
             <h5 class="fw-bold text-white mb-1">Dedy Armiady, S.Kom., M.Kom.</h5>
-            <div class="text-success font-mono small mb-2 fw-semibold">Dosen Pembimbing I</div>
+            <div class="text-info font-mono small mb-2 fw-semibold">Dosen Pembimbing I</div>
             <p class="mb-0">Dosen Pembimbing Bidang Arsitektur Sistem Komputer &amp; Jaringan IoT.</p>
           </div>
         </div>
@@ -892,11 +916,11 @@
         <!-- Pembimbing 2 -->
         <div class="col-lg-4 col-md-6">
           <div class="feature-card text-center">
-            <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center bg-purple bg-opacity-20 border border-purple border-opacity-50" style="width: 80px; height: 80px;">
-              <i class="bi bi-person-badge-fill text-warning fs-1"></i>
+            <div class="team-avatar">
+              <i class="bi bi-person-fill"></i>
             </div>
             <h5 class="fw-bold text-white mb-1">Budi Handoyo, M.Kom.</h5>
-            <div class="text-warning font-mono small mb-2 fw-semibold">Dosen Pembimbing II</div>
+            <div class="text-info font-mono small mb-2 fw-semibold">Dosen Pembimbing II</div>
             <p class="mb-0">Dosen Pembimbing Bidang Kecerdasan Buatan &amp; Pengolahan Citra Digital.</p>
           </div>
         </div>
